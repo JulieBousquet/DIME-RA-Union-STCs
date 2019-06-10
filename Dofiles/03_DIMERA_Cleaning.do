@@ -395,56 +395,7 @@ summarize $var_issues
 
 save "$analysis_dt/03. Temp/DIMERA_Issues", replace
 
-use "$analysis_dt/03. Temp/DIMERA_Issues", clear
 
-collapse (mean) $var_issues
-cap ssc inst sxpose
-xpose, v clear
-list
-
-ren _varname categories_issues
-ren v1 average_issues
-
-replace categories_issues = "Working Conditions" if categories_issues == "is_working_condition" 
-replace categories_issues = "Visa" if categories_issues == "is_visa" 
-replace categories_issues = "Horizontal Mobility" if categories_issues == "is_horizontal_mobility" 
-replace categories_issues = "Contract Length" if categories_issues == "is_contract_length" 
-replace categories_issues = "Contract Type" if categories_issues == "is_contract_type" 
-replace categories_issues = "Health Insurance" if categories_issues == "is_health_insurance" 
-replace categories_issues = "Transparency" if categories_issues == "is_transparency" 
-replace categories_issues = "Career Guidance" if categories_issues == "is_career_guidance" 
-replace categories_issues = "Career Progress" if categories_issues == "is_career_progress" 
-replace categories_issues = "Learning opportunities" if categories_issues == "is_learning_opportunities" 
-replace categories_issues = "Management" if categories_issues == "is_management" 
-replace categories_issues = "Communication Field" if categories_issues == "is_communication_field" 
-replace categories_issues = "Misunderstanding DIME Changes" if categories_issues == "is_misund_DIME_changes" 
-replace categories_issues = "Misunderstanding Contract" if categories_issues == "is_misund_contract" 
-replace categories_issues = "Misunderstanding Career" if categories_issues == "is_misund_career" 
-
-graph pie average_issues, over(categories_issues)
-
-graph pie average_issues, over(categories_issues) ///
-	pie(_all, explode) ///
-	plabel(_all percent, color(black) size(vsmall) format(%4.0g)) ///
-	line(lcolor(white) lwidth(none))  ///
-	title(Categories of issues at DIME, span nobox)  ///
-	subtitle("What issues would you like to see on the agenda?", span nobox)  /// 
-	note("Data based on a total of 31 respondents" "for a total of 74 issues reported", nobox)  ///
-	legend(on nocolfirst nostack cols(1) rowgap(minuscule)  ///
-		colgap(zero) keygap(minuscule) size(medsmall)  ///
-		color(black) margin(zero) box fcolor(white)  ///
-		lcolor(white) linegap(zero) region(fcolor(white)  ///
-			margin(zero) lcolor(white) lwidth(none)  ///
-			lpattern(blank))  ///
-		bmargin(zero) bexpand title(, margin(tiny) nobox)  ///
-		position(9) span)  ///
-	graphregion(margin(zero) fcolor(white) lcolor(white) /// 
-		lwidth(none) ifcolor(white) ilcolor(white) ilwidth(none))  ///
-	plotregion(margin(zero) fcolor(white) lcolor(white)  ///
-		lwidth(none) ifcolor(white) ilcolor(white) ilwidth(none))
-
-graph export "$analysis_out\cat_issues.pdf", as(pdf) replace
- 
 *--------------------1.2:
 
 
@@ -791,55 +742,6 @@ summarize $var_solutions
 
 save "$analysis_dt/03. Temp/DIMERA_Issues_Solutions", replace
 
-use "$analysis_dt/03. Temp/DIMERA_Issues_Solutions", clear
-
-collapse (mean) $var_solutions
-cap ssc inst sxpose
-xpose, v clear
-list
-
-ren _varname categories_solutions
-ren v1 average_solutions
-
-replace categories_solutions = "Mentorship" if categories_solutions == "sol_mentorship" 
-replace categories_solutions = "Improve Protocol Openings" if categories_solutions == "sol_openings_protocol" 
-replace categories_solutions = "Job Mobility" if categories_solutions == "sol_job_mobility" 
-replace categories_solutions = "Structure Roles and Career" if categories_solutions == "sol_structure_role_career" 
-replace categories_solutions = "Health Insurance" if categories_solutions == "sol_health_insurance" 
-replace categories_solutions = "Performance Review" if categories_solutions == "sol_performance_review" 
-replace categories_solutions = "Type Contract" if categories_solutions == "sol_type_contract" 
-replace categories_solutions = "Communication" if categories_solutions == "sol_communication" 
-replace categories_solutions = "Dime Management" if categories_solutions == "sol_dime_management" 
-replace categories_solutions = "Strucutre for free Speach" if categories_solutions == "sol_free_speech_structure" 
-replace categories_solutions = "Visas" if categories_solutions == "sol_visa" 
-replace categories_solutions = "Transparency" if categories_solutions == "sol_transparency" 
-replace categories_solutions = "Trainings" if categories_solutions == "sol_training" 
-
-
-graph pie average_solutions, over(categories_solutions)
-
-graph pie average_solutions, over(categories_solutions) ///
-	pie(_all, explode) ///
-	plabel(_all percent, color(black) size(vsmall) format(%4.0g)) ///
-	line(lcolor(white) lwidth(none))  ///
-	title(Categories of issues at DIME, span nobox)  ///
-	subtitle("What solution would you propose to improve STCs situation at DIME?", span nobox)  /// 
-	note("Data based on a total of 31 respondents" "for a total of 57 solutions proposed", nobox)  ///
-	legend(on nocolfirst nostack cols(1) rowgap(minuscule)  ///
-		colgap(zero) keygap(minuscule) size(medsmall)  ///
-		color(black) margin(zero) box fcolor(white)  ///
-		lcolor(white) linegap(zero) region(fcolor(white)  ///
-			margin(zero) lcolor(white) lwidth(none)  ///
-			lpattern(blank))  ///
-		bmargin(zero) bexpand title(, margin(tiny) nobox)  ///
-		position(9) span)  ///
-	graphregion(margin(zero) fcolor(white) lcolor(white) /// 
-		lwidth(none) ifcolor(white) ilcolor(white) ilwidth(none))  ///
-	plotregion(margin(zero) fcolor(white) lcolor(white)  ///
-		lwidth(none) ifcolor(white) ilcolor(white) ilwidth(none))
-
-graph export "$analysis_out\cat_solutions.pdf", as(pdf) replace
- 								
 
 /*====================================================================
                         3: Others
