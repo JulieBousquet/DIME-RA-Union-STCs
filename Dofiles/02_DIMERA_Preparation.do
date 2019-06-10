@@ -558,6 +558,8 @@ tab solution2, m
 tab solution3, m 
 tab add_other, m
 
+gen iid = _n
+
 save "$analysis_dt/02. Base/DIMERA_Union_agenda_Prep.dta", replace
 
 
