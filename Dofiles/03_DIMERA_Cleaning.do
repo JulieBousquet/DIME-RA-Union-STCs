@@ -68,7 +68,7 @@ and given the internet poor conditions in the country
 (outside WB office), going to a cafÃ© or working from home 
 is not an option.
 34) Support to those working largely in isolation in COs  */
-gen working_condition = 1 if ///
+gen is_working_condition = 1 if ///
 			aid == 9 | ///
 			aid == 34 
 
@@ -80,7 +80,7 @@ and 2. it's WAY more costly if you're from a developing
 country that needs visa for everywhere.   
 43) For sake of getting work visa renewal in country of work, 
 would be better to have ETC style contract */			
-gen visa = 1 if ///
+gen is_visa = 1 if ///
 			aid == 89 | ///
 			aid == 83 | ///
 			aid == 93 | ///
@@ -90,7 +90,7 @@ gen visa = 1 if ///
 10) Not very open to inter-sector mobility within DIME
 13) Lack of flexibility to work on different projects 
 (RAs/FCs may be interested in more than one thematic area)   */
-gen horizontal_mobility = 1 if ///
+gen is_horizontal_mobility = 1 if ///
 			aid == 10 | ///
 			aid == 13 
 
@@ -117,7 +117,7 @@ years, what's the logic in filling it with an STC contract?
 79) Working the number of days we're paid: There needs to be 
 clear guidance that STCs cannot be asked to work more 
 days than they're paid for   */
-gen contract_length = 1 if ///
+gen is_contract_length = 1 if ///
 			aid == 21 | ///
 			aid == 31 | ///
 			aid == 59 | ///
@@ -147,7 +147,7 @@ everyday, and coordinating logistics, or doing data analysis,
 however, our contract doesn't cover any health insurance. 
 In many cases it doesn't take into account the differences in 
 housing/food/other expenses. */
-gen contract_type = 1 if ///
+gen is_contract_type = 1 if ///
 			aid == 27 | ///
 			aid == 8  | ///
 			aid == 13 | ///
@@ -171,7 +171,7 @@ however, our contract doesn't cover any health insurance.
 In many cases it doesn't take into account the differences in 
 housing/food/other expenses.
 12) Health insurance*/
-gen health_insurance = 1 if ///
+gen is_health_insurance = 1 if ///
 			aid == 28 | ///
 			aid == 19 | ///
 			aid == 7  | ///
@@ -195,7 +195,7 @@ is open and competitive when all the RA's are well aware who
 the contract is for. The RAs work hard and they should 
 be compensated with promotions or contract improvements.  
 58)  Greater transparency with regards to hiring.  */
-gen transparency = 1 if ///
+gen is_transparency = 1 if ///
 			aid == 24 | ///
 			aid == 74 | ///
 			aid == 89 | ///
@@ -237,7 +237,7 @@ on proposal
 to become a staff   
 */
 
-gen career_guidance = 1 if ///
+gen is_career_guidance = 1 if ///
 			aid == 34 | ///
 			aid == 38 | ///
 			aid == 46 | ///
@@ -283,7 +283,7 @@ spent that time implementing and working on IEs for TTLs.
 That is just a good as an education on working in the 
 development economics field.   
  */
-gen career_progress = 1 if ///
+gen is_career_progress = 1 if ///
 			aid == 35 | ///
 			aid == 62 | ///
 			aid == 42 | ///
@@ -298,7 +298,7 @@ gen career_progress = 1 if ///
 and chances to attend workshops/conferences on behalf of our 
 projects.
 52) Training  */
-gen learning_opportunities = 1 if ///
+gen is_learning_opportunities = 1 if ///
 			aid == 45 | ///
 			aid == 52 
 
@@ -307,7 +307,7 @@ gen learning_opportunities = 1 if ///
 6) Lack of constructive criticism/feedback
 66) Lack of constant feedback and clear channels to express 
 concerns and ask questions   */
-gen management  = 1 if ///
+gen is_management  = 1 if ///
 			aid == 6  | ///
 			aid == 66 | ///
 			aid == 2
@@ -316,7 +316,7 @@ gen management  = 1 if ///
 1) How to improve links between DIME and CMU: how to engage 
 dialogue between researchers on the one hand and CMU staff
 and clients on the other.  */
-gen communication_field = 1 if ///
+gen is_communication_field = 1 if ///
 			aid == 50 
 
 /*Category 13: Misunderstanding in DIME changes
@@ -326,7 +326,7 @@ with DIME as a department
 the recent management changes.
 26) Future of DIME internal communications: RA/FC "union"? 
  */
-gen misunderstanding_DIME_changes = 1 if ///
+gen is_misund_DIME_changes = 1 if ///
 			aid == 72 | ///
 			aid == 14 | ///
 			aid == 26 
@@ -348,7 +348,7 @@ beyond the typical 150-day contract (especially as one's
 contract draws towards the end), more transparency on salary 
 grids and benefits across contract types (STC, ETC, staff, etc.) 
  */
-gen misunderstanding_contract = 1 if ///
+gen is_misund_contract = 1 if ///
 			aid == 74 | ///
 			aid == 91 | ///
 			aid == 92 | ///
@@ -369,18 +369,20 @@ grids and benefits across contract types (STC, ETC, staff, etc.)
 RA/FC proportion of all DIME staff, career path stats of 
 previous RA/FCs (PhD placements, staff placements, other 
 if possible, etc)  */
-gen misunderstanding_career = 1 if ///
+gen is_misund_career = 1 if ///
 			aid == 28 | ///
 			aid == 84 | ///
 			aid == 51 | ///
 			aid == 71
 
-global var_issues 	working_condition visa horizontal_mobility ///
-					contract_length contract_type health_insurance ///
-					transparency career_guidance career_progress ///
-					learning_opportunities management ///
-					communication_field misunderstanding_DIME_changes ///
-					misunderstanding_contract misunderstanding_career
+
+global var_issues 	is_working_condition is_visa is_horizontal_mobility ///
+					is_contract_length is_contract_type is_health_insurance ///
+					is_transparency is_career_guidance is_career_progress ///
+					is_learning_opportunities is_management ///
+					is_communication_field is_misund_DIME_changes ///
+					is_misund_contract is_misund_career					
+
 
 collapse (sum) $var_issues, by(iid)
 
@@ -403,21 +405,21 @@ list
 ren _varname categories_issues
 ren v1 average_issues
 
-replace categories_issues = "Working Conditions" if categories_issues == "working_condition" 
-replace categories_issues = "Visa" if categories_issues == "visa" 
-replace categories_issues = "Horizontal Mobility" if categories_issues == "horizontal_mobility" 
-replace categories_issues = "Contract Length" if categories_issues == "contract_length" 
-replace categories_issues = "Contract Type" if categories_issues == "contract_type" 
-replace categories_issues = "Health Insurance" if categories_issues == "health_insurance" 
-replace categories_issues = "Transparency" if categories_issues == "transparency" 
-replace categories_issues = "Career Guidance" if categories_issues == "career_guidance" 
-replace categories_issues = "Career Progress" if categories_issues == "career_progress" 
-replace categories_issues = "Learning opportunities" if categories_issues == "learning_opportunities" 
-replace categories_issues = "Management" if categories_issues == "management" 
-replace categories_issues = "Communication Field" if categories_issues == "communication_field" 
-replace categories_issues = "Misunderstanding DIME Changes" if categories_issues == "misunderstanding_DIME_changes" 
-replace categories_issues = "Misunderstanding Contract" if categories_issues == "misunderstanding_contract" 
-replace categories_issues = "Misunderstanding Career" if categories_issues == "misunderstanding_career" 
+replace categories_issues = "Working Conditions" if categories_issues == "is_working_condition" 
+replace categories_issues = "Visa" if categories_issues == "is_visa" 
+replace categories_issues = "Horizontal Mobility" if categories_issues == "is_horizontal_mobility" 
+replace categories_issues = "Contract Length" if categories_issues == "is_contract_length" 
+replace categories_issues = "Contract Type" if categories_issues == "is_contract_type" 
+replace categories_issues = "Health Insurance" if categories_issues == "is_health_insurance" 
+replace categories_issues = "Transparency" if categories_issues == "is_transparency" 
+replace categories_issues = "Career Guidance" if categories_issues == "is_career_guidance" 
+replace categories_issues = "Career Progress" if categories_issues == "is_career_progress" 
+replace categories_issues = "Learning opportunities" if categories_issues == "is_learning_opportunities" 
+replace categories_issues = "Management" if categories_issues == "is_management" 
+replace categories_issues = "Communication Field" if categories_issues == "is_communication_field" 
+replace categories_issues = "Misunderstanding DIME Changes" if categories_issues == "is_misund_DIME_changes" 
+replace categories_issues = "Misunderstanding Contract" if categories_issues == "is_misund_contract" 
+replace categories_issues = "Misunderstanding Career" if categories_issues == "is_misund_career" 
 
 graph pie average_issues, over(categories_issues)
 
@@ -443,9 +445,6 @@ graph pie average_issues, over(categories_issues) ///
 
 graph export "$analysis_out\cat_issues.pdf", as(pdf) replace
  
-/*
-
-*/
 *--------------------1.2:
 
 
@@ -455,9 +454,7 @@ graph export "$analysis_out\cat_issues.pdf", as(pdf) replace
 
 use "$analysis_dt/03. Temp/DIMERA_Issues", clear
 
-foreach var of global var_issues {
-	ren `var' is_`var'
-}
+
 *--------------------2.1: Categories
 
 tab solution1, m 
@@ -501,8 +498,6 @@ replace solution = solution3 if mi(solution)
 tab solution
 *57 solutions 
 
-gen type_response = 1 if 
-
 /*Categorie 1: Mentorship
 3) Have another TTL work as a "buddy" / "mentor" with you. 
 (Think McKinsey has something similar where you can reach 
@@ -516,14 +511,12 @@ or twice a quarter with the RA/FC for coffee chats
 13) Develop a career guidance & mentoring program for RAs/FCs 
 46) Set up a mentorship program to help FCs to pursue their goal   
  */
-gen  = 1 if ///
-			aid ==  | ///
-			aid ==  | ///
-			aid ==  | ///
-			aid ==  | ///
-			aid ==  | ///
-			aid ==  | ///
-			aid == 
+gen sol_mentorship = 1 if ///
+			aid == 3 | ///
+			aid == 34 | ///
+			aid == 10 | ///
+			aid == 13 | ///
+			aid == 46  
 
 /*Categorie 2: Position protocol
 8) First screening process of candidates for new position 
@@ -551,15 +544,13 @@ brainstorm and do short presentation on their proposal
 89) Open applications with information about the position but 
 make it clear positions can be open expost 
  */
-gen  = 1 if ///
-			aid ==  | ///
-			aid ==  | ///
-			aid ==  | ///
-			aid ==  | ///
-			aid ==  | ///
-			aid ==  | ///
-			aid == 
-
+gen sol_openings_protocol = 1 if ///
+			aid == 8 | ///
+			aid == 29 | ///
+			aid == 31 | ///
+			aid == 28 | ///
+			aid == 88 | ///
+			aid == 89 
 /*
 Categori 3: Mobility
 11) Need to create an environment where RAs can approach 
@@ -579,14 +570,14 @@ so RAs/FCs could volunteer research time with IEs that are more
 aligned with their personal research interests.  
 14) Increase horizontal mobility (flexibility to work on 
 different projects) */
-gen  = 1 if ///
-			aid ==  | ///
-			aid ==  | ///
-			aid ==  | ///
-			aid ==  | ///
-			aid ==  | ///
-			aid ==  | ///
-			aid == 
+gen sol_job_mobility = 1 if ///
+			aid == 11 | ///
+			aid == 42 | ///
+			aid == 21 | ///
+			aid == 35 | ///
+			aid == 37 | ///
+			aid == 59 | ///
+			aid == 14
 
 /* Categorie 4: Roles and Career Path
 15) Clarify roles and possible career paths for RAs/FCs with 
@@ -627,14 +618,16 @@ I understand that some survey and data work need to be done,
 but with DIME expansion there should be some diversification 
 to allow low- and high-skill jobs to be differentiated.
 */
-gen  = 1 if ///
-			aid ==  | ///
-			aid ==  | ///
-			aid ==  | ///
-			aid ==  | ///
-			aid ==  | ///
-			aid ==  | ///
-			aid == 
+gen sol_structure_role_career = 1 if ///
+			aid == 15 | ///
+			aid == 35 | ///
+			aid == 43 | ///
+			aid == 47 | ///
+			aid == 32 | ///
+			aid == 57 | ///
+			aid == 22 | ///
+			aid == 49 | ///
+			aid == 55 
 
 /*
 Categorie 5: Heatlh Insurance
@@ -644,28 +637,18 @@ Categorie 5: Heatlh Insurance
 Bank-wide issue and DIME probably cannot act on its own even if 
 it wanted to get its RAs/FCs better coverage  
  */
-gen  = 1 if ///
-			aid ==  | ///
-			aid ==  | ///
-			aid ==  | ///
-			aid ==  | ///
-			aid ==  | ///
-			aid ==  | ///
-			aid == 
+gen sol_health_insurance = 1 if ///
+			aid == 16 | ///
+			aid == 63 | ///
+			aid == 12 
 
 /*Categroie 6: Feedback
 24) There should be a mandatory feedback system between 
 TTL and RA/FCs.  
 51) Performance Assessment */
-gen  = 1 if ///
-			aid ==  | ///
-			aid ==  | ///
-			aid ==  | ///
-			aid ==  | ///
-			aid ==  | ///
-			aid ==  | ///
-			aid == 
-
+gen sol_performance_review = 1 if ///
+			aid == 24 | ///
+			aid == 51 
 
 /* Categorie 7: Type of contract
 26) ETC contracts 
@@ -682,36 +665,14 @@ cannot be asked to work more days than we're paid, with
 guarantee that we'll be supported in case we resist that  
 84) Provide other opportunities for STCs after 150 days of work
 - with other Intl organizations / NGOs, projects, etc. */
-gen  = 1 if ///
-			aid ==  | ///
-			aid ==  | ///
-			aid ==  | ///
-			aid ==  | ///
-			aid ==  | ///
-			aid ==  | ///
-			aid == 
-
-/* */
-gen  = 1 if ///
-			aid ==  | ///
-			aid ==  | ///
-			aid ==  | ///
-			aid ==  | ///
-			aid ==  | ///
-			aid ==  | ///
-			aid == 
-
-
-/* */
-gen  = 1 if ///
-			aid ==  | ///
-			aid ==  | ///
-			aid ==  | ///
-			aid ==  | ///
-			aid ==  | ///
-			aid ==  | ///
-			aid == 
-
+gen sol_type_contract = 1 if ///
+			aid == 26 | ///
+			aid == 56 | ///
+			aid == 58 | ///
+			aid == 65 | ///
+			aid == 82 | ///
+			aid == 81 | ///
+			aid == 84
 
 /*Categorie 8: More communication
 93) Explain clearly working conditions when making the offer 
@@ -722,7 +683,9 @@ fiscal year, the TTL provides some explanations on how the
 number of days was determined
 7) Better communication between DIME and Country Office on what 
 would be the working conditions, at least having a place to 
-work assigned.  
+work assigned. 
+17) Formal system to set up in country offices to accomodate 
+and integrate FCs   
 25) RA/ FC union to improve internal comms 
 19)  Create a regular update of the situation of STC in DIME 
 (similar to what is done at the bank level) : percentage of STC 
@@ -740,14 +703,15 @@ truly be competitive and be known to everyone within DIME so
 that everyone has an equal chance of being selected. 
 48)  Communicate on this program if their already exist  
  */
-gen  = 1 if ///
-			aid ==  | ///
-			aid ==  | ///
-			aid ==  | ///
-			aid ==  | ///
-			aid ==  | ///
-			aid ==  | ///
-			aid == 
+gen sol_communication = 1 if ///
+			aid == 93 | ///
+			aid == 75 | ///
+			aid == 7  | ///
+			aid == 25 | ///
+			aid == 19 | ///
+			aid == 33 | ///
+			aid == 48 | ///
+			aid == 17
 
 /*Categorie 9: DIME Management
 20) Limit the number of STCs a TTLs can have at the same 
@@ -756,14 +720,10 @@ time (or ratio non STC to STC in the same team)
 issues or better compel/train TTL to do so 
 64) Have better management within the teams and across 
 DIME overall   */
-gen  = 1 if ///
-			aid ==  | ///
-			aid ==  | ///
-			aid ==  | ///
-			aid ==  | ///
-			aid ==  | ///
-			aid ==  | ///
-			aid == 
+gen sol_dime_management = 1 if ///
+			aid == 20 | ///
+			aid == 50 | ///
+			aid == 64 
 
 /*Categorie 10: Free Parole support structure
 79) A process whereby STCs can speak to someone neutral at 
@@ -776,75 +736,110 @@ and opportunities
 RA's and FC's to share common challenges and experiences. 
 74) Provide a device where FC can inquire anonymously whether 
 a task assigned by TTL is justified or bit borderline. */
-gen  = 1 if ///
-			aid ==  | ///
-			aid ==  | ///
-			aid ==  | ///
-			aid ==  | ///
-			aid ==  | ///
-			aid ==  | ///
-			aid == 			
+gen sol_free_speech_structure = 1 if ///
+			aid == 79 | ///
+			aid == 51 | ///
+			aid == 53 | ///
+			aid == 74 	
 
 /* 
 Categorie 11: Visa
 90)  For the visas, provide a budget allocated to helping 
 RAs to travel */
-gen  = 1 if ///
-			aid ==  | ///
-			aid ==  | ///
-			aid ==  | ///
-			aid ==  | ///
-			aid ==  | ///
-			aid ==  | ///
-			aid == 								
-
-/*Categorie 12: Field
-17) Formal system to set up in country offices to accomodate 
-and integrate FCs  */
-gen  = 1 if ///
-			aid ==  | ///
-			aid ==  | ///
-			aid ==  | ///
-			aid ==  | ///
-			aid ==  | ///
-			aid ==  | ///
-			aid == 								
+gen sol_visa = 1 if ///
+			aid == 90 										
 
 
-/*Categorie 13: More transparency
+/*Categorie 12: More transparency
 23) It is unclear how STC rates are set. There needs to be a 
 clearer standards.
 45) More transparency in terms of what RA and FC job descriptions 
 are and access to trainings that can allow FC to be at RA skill 
 level. Online trainings would be good for FCs based all over world.
  */
-gen  = 1 if ///
-			aid ==  | ///
-			aid ==  | ///
-			aid ==  | ///
-			aid ==  | ///
-			aid ==  | ///
-			aid ==  | ///
-			aid == 								
+gen sol_transparency = 1 if ///
+			aid == 23 | ///
+			aid == 45 							
 
 
-/*Categorie 14: Training
+/*Categorie 13: Training
 45) More transparency in terms of what RA and FC job descriptions 
 are and access to trainings that can allow FC to be at RA skill 
 level. Online trainings would be good for FCs based all over world.
 
  */
-gen  = 1 if ///
-			aid ==  | ///
-			aid ==  | ///
-			aid ==  | ///
-			aid ==  | ///
-			aid ==  | ///
-			aid ==  | ///
-			aid == 								
+gen sol_training = 1 if ///
+			aid == 45 							
 
 
-									
+
+global var_solutions 	sol_mentorship sol_openings_protocol ///
+						sol_job_mobility sol_structure_role_career ///
+						sol_health_insurance sol_performance_review ///
+						sol_type_contract sol_communication ///
+						sol_dime_management sol_free_speech_structure ///
+						sol_visa sol_transparency sol_training
+
+collapse (sum) $var_solutions, by(iid)
+
+merge 1:1 iid using "$analysis_dt/03. Temp/DIMERA_Issues.dta"
+
+order $var_solutions, a(solution3)
+drop _merge
+
+summarize $var_solutions
+
+save "$analysis_dt/03. Temp/DIMERA_Issues_Solutions", replace
+
+use "$analysis_dt/03. Temp/DIMERA_Issues_Solutions", clear
+
+collapse (mean) $var_solutions
+cap ssc inst sxpose
+xpose, v clear
+list
+
+ren _varname categories_solutions
+ren v1 average_solutions
+
+replace categories_solutions = "Mentorship" if categories_solutions == "sol_mentorship" 
+replace categories_solutions = "Improve Protocol Openings" if categories_solutions == "sol_openings_protocol" 
+replace categories_solutions = "Job Mobility" if categories_solutions == "sol_job_mobility" 
+replace categories_solutions = "Structure Roles and Career" if categories_solutions == "sol_structure_role_career" 
+replace categories_solutions = "Health Insurance" if categories_solutions == "sol_health_insurance" 
+replace categories_solutions = "Performance Review" if categories_solutions == "sol_performance_review" 
+replace categories_solutions = "Type Contract" if categories_solutions == "sol_type_contract" 
+replace categories_solutions = "Communication" if categories_solutions == "sol_communication" 
+replace categories_solutions = "Dime Management" if categories_solutions == "sol_dime_management" 
+replace categories_solutions = "Strucutre for free Speach" if categories_solutions == "sol_free_speech_structure" 
+replace categories_solutions = "Visas" if categories_solutions == "sol_visa" 
+replace categories_solutions = "Transparency" if categories_solutions == "sol_transparency" 
+replace categories_solutions = "Trainings" if categories_solutions == "sol_training" 
+
+
+graph pie average_solutions, over(categories_solutions)
+
+graph pie average_solutions, over(categories_solutions) ///
+	pie(_all, explode) ///
+	plabel(_all percent, color(black) size(vsmall) format(%4.0g)) ///
+	line(lcolor(white) lwidth(none))  ///
+	title(Categories of issues at DIME, span nobox)  ///
+	subtitle("What solution would you propose to improve STCs situation at DIME?", span nobox)  /// 
+	note("Data based on a total of 31 respondents" "for a total of 57 solutions proposed", nobox)  ///
+	legend(on nocolfirst nostack cols(1) rowgap(minuscule)  ///
+		colgap(zero) keygap(minuscule) size(medsmall)  ///
+		color(black) margin(zero) box fcolor(white)  ///
+		lcolor(white) linegap(zero) region(fcolor(white)  ///
+			margin(zero) lcolor(white) lwidth(none)  ///
+			lpattern(blank))  ///
+		bmargin(zero) bexpand title(, margin(tiny) nobox)  ///
+		position(9) span)  ///
+	graphregion(margin(zero) fcolor(white) lcolor(white) /// 
+		lwidth(none) ifcolor(white) ilcolor(white) ilwidth(none))  ///
+	plotregion(margin(zero) fcolor(white) lcolor(white)  ///
+		lwidth(none) ifcolor(white) ilcolor(white) ilwidth(none))
+
+graph export "$analysis_out\cat_solutions.pdf", as(pdf) replace
+ 								
 
 /*====================================================================
                         3: Others
