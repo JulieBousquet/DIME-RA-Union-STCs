@@ -766,8 +766,8 @@ gen sol_transparency = 1 if ///
 45) More transparency in terms of what RA and FC job descriptions 
 are and access to trainings that can allow FC to be at RA skill 
 level. Online trainings would be good for FCs based all over world.
-
  */
+
 gen sol_training = 1 if ///
 			aid == 45 							
 
@@ -845,10 +845,38 @@ graph export "$analysis_out\cat_solutions.pdf", as(pdf) replace
                         3: Others
 ====================================================================*/
 
+use "$analysis_dt/03. Temp/DIMERA_Issues_Solutions", clear
 
 *--------------------3.1:
 
 tab add_other, m
+list add_other, table notrim
+
+*For the change in DIME Strucutre
+/*
+ There needs to proposal and fundraising unit within DIME. 
+Economists splitting their time between fundraising for new 
+project, proposal writing and research will eventually lead 
+to a high burnout rate among the staff and the quality of the 
+products that DIME produces will suffer. DIME needs a large 
+team of proposal writes and fundraisers who can work with 
+economists to obtain new projects and fundraise money for them, 
+this team will be composed of operational staff who have 
+experience with proposal writing and fundraising and their 
+sole missing is to write proposals and fundraise for projects 
+for DIME. There also needs to a an event planning and workshop 
+unit. This will also be composed of operational staff that will 
+solely focus on organizing and planning all the events and 
+workshops that DIME leads in a fiscal year. This will take 
+some pressure off economists and some RAs and will lead to 
+better events and workshops since there will be a dedicated 
+team to work on them instead of having economists and RAs do 
+it which takes time away from them to work on their existing 
+projects and sometimes leads to events and workshops that are
+not a fulfilling experience.  
+*/
+
+save "$analysis_dt/04. Final/DIMERA_Cleaned", replace
 
 *--------------------3.2:
 
