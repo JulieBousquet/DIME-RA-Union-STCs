@@ -346,7 +346,34 @@ gen is_misund_career = 1 if ///
 * Check all issues were assigned to a category
 egen a = rowtotal(is_working_condition is_visa is_horizontal_mobility is_contract_length is_contract_type is_health_insurance is_transparency is_career_guidance is_career_progress is_learning_opportunities is_management is_communication_field is_misund_DIME_changes is_misund_contract is_misund_career)
 tab a if !mi(issue)
-drop a
+replace aid = aid + "_1"
+*drop a
+
+preserve
+keep if a == 2
+replace aid = "3_2_2" if aid == "3_2_1"
+replace aid = "10_2_2" if aid == "10_2_1"
+replace aid = "17_3_2" if aid == "17_3_1"
+replace aid = "28_2_2" if aid == "28_2_1"
+tempfile dup_is
+save	`dup_is'
+restore
+
+append using `dup_is'
+br if a == 2
+sort aid
+* issue 3_2
+replace is_contract_type = 0 if aid == "3_2_1"
+replace	is_health_insurance = 0 if aid == "3_2_2"
+* issue 10_2
+replace is_contract_type = 0 if aid == "10_2_1"
+replace	is_health_insurance = 0 if aid == "10_2_2"
+* issue 28_2
+replace is_career_guidance = 0 if aid == "28_2_1"
+replace	is_career_progress = 0 if aid == "28_2_2"
+* issue 17_3
+replace is_misund_contract = 0 if aid == "17_3_1"
+replace	is_misund_career = 0 if aid == "17_3_2"
 			
 * Create biggest clasification
 	gen issue_cat = .
@@ -371,7 +398,8 @@ drop a
 								is_misund_contract == 1 | ///
 								is_misund_career == 1
 		
-			
+			lab def issue_cat_l 1 "Working conditions" 2 "Career" 3 "Communication"
+			lab val issue_cat issue_cat_l
 
 global var_issues 	is_working_condition is_visa is_horizontal_mobility ///
 					is_contract_length is_contract_type is_health_insurance ///
@@ -381,7 +409,7 @@ global var_issues 	is_working_condition is_visa is_horizontal_mobility ///
 					is_misund_contract is_misund_career
 					
 foreach var of global var_issues {
-	replace `var' = 0 if mi(`var')
+	replace `var' = 0 if mi(`var') & !mi(issue)
 }
 
 					
@@ -393,6 +421,27 @@ foreach var of global var_issues {
 *drop _merge
 
 summarize $var_issues
+drop a
+
+gen categories_issues = ""
+replace categories_issues = "Working Conditions" if is_working_condition == 1
+replace categories_issues = "Visa" if is_visa  == 1
+replace categories_issues = "Horizontal Mobility" if is_horizontal_mobility  == 1
+replace categories_issues = "Contract Length" if is_contract_length  == 1
+replace categories_issues = "Contract Type" if is_contract_type == 1
+replace categories_issues = "Health Insurance" if is_health_insurance == 1 
+replace categories_issues = "Transparency" if is_transparency == 1 
+replace categories_issues = "Career Guidance" if is_career_guidance == 1 
+replace categories_issues = "Career Progress" if is_career_progress == 1 
+replace categories_issues = "Learning opportunities" if is_learning_opportunities == 1
+replace categories_issues = "Management" if is_management == 1 
+replace categories_issues = "Communication Field" if is_communication_field == 1 
+replace categories_issues = "Misunderstanding DIME Changes" if is_misund_DIME_changes == 1
+replace categories_issues = "Misunderstanding Contract" if is_misund_contract == 1
+replace categories_issues = "Misunderstanding Career" if is_misund_career== 1 
+
+sort issue_cat categories_issues issue
+export excel aid issue_cat categories_issues issue using "/Volumes/Camila/Dropbox/World Bank/DIME-RA-Union-STCs/Output/list_issues_14jun2019.xlsx", sheetreplace firstrow(var)
 
 save "$analysis_dt/03. Temp/DIMERA_Issues_Camila", replace
 -
