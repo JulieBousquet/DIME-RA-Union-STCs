@@ -489,7 +489,47 @@ graph export	"$analysis_out/15_mentorship.png", width(4000) replace
 
 *--------------------6.1: Issues
 
-use "$analysis_dt/03. Temp/DIMERA_Issues", clear
+* 1. general categorization
+	use "$analysis_dt/03. Temp/DIMERA_Issues_Camila", clear
+
+	tab issue_cat, gen(issue_cat_)
+	collapse (mean) issue_cat_*
+	lab var issue_cat_1 "Working conditions"
+	lab var issue_cat_2 "Career"
+	lab var issue_cat_3 "Communication"
+	graph pie issue_cat_1 issue_cat_2 issue_cat_3, pie(_all, explode) ///
+		plabel(_all percent, color(black) size(vsmall) format(%4.0g)) ///
+		line(lcolor(white) lwidth(none))  ///
+		title(Categories of issues at DIME, span nobox)  ///
+		subtitle("What issues would you like to see on the agenda?", span nobox)  /// 
+		note("Data based on a total of 31 respondents" "for a total of 74 issues reported", nobox)  ///
+		legend(on nocolfirst nostack cols(1) rowgap(minuscule)  ///
+			colgap(zero) keygap(minuscule) size(medsmall)  ///
+			color(black) margin(zero) box fcolor(white)  ///
+			lcolor(white) linegap(zero) region(fcolor(white)  ///
+				margin(zero) lcolor(white) lwidth(none)  ///
+				lpattern(blank))  ///
+			bmargin(zero) bexpand title(, margin(tiny) nobox)  ///
+			position(9) span)  ///
+		graphregion(margin(zero) fcolor(white) lcolor(white) /// 
+			lwidth(none) ifcolor(white) ilcolor(white) ilwidth(none))  ///
+		plotregion(margin(zero) fcolor(white) lcolor(white)  ///
+			lwidth(none) ifcolor(white) ilcolor(white) ilwidth(none)) name(issues_type, replace)
+	graph export "$analysis_out/16_cat_issues.png", width(4000) replace
+
+
+* 2. Smaller categorization
+
+use "$analysis_dt/03. Temp/DIMERA_Issues_Camila", clear
+loc num_is_1 "29"
+loc num_is_2 "25"
+loc num_is_3 "26"
+
+
+foreach category in 1 2 3 {
+
+preserve
+keep if issue_cat == `category'
 
 collapse (mean) $var_issues
 cap ssc inst sxpose
@@ -514,16 +554,17 @@ replace categories_issues = "Communication Field" if categories_issues == "is_co
 replace categories_issues = "Misunderstanding DIME Changes" if categories_issues == "is_misund_DIME_changes" 
 replace categories_issues = "Misunderstanding Contract" if categories_issues == "is_misund_contract" 
 replace categories_issues = "Misunderstanding Career" if categories_issues == "is_misund_career" 
+drop if average_issues ==0
 
-graph pie average_issues, over(categories_issues)
+* graph pie average_issues, over(categories_issues)
 
 graph pie average_issues, over(categories_issues) ///
 	pie(_all, explode) ///
 	plabel(_all percent, color(black) size(vsmall) format(%4.0g)) ///
 	line(lcolor(white) lwidth(none))  ///
 	title(Categories of issues at DIME, span nobox)  ///
-	subtitle("What issues would you like to see on the agenda?", span nobox)  /// 
-	note("Data based on a total of 31 respondents" "for a total of 74 issues reported", nobox)  ///
+	subtitle("Working conditions", span nobox)  /// 
+	note("Data based on a total of 31 respondents" "for a total of `num_is_`category'' issues reported", nobox)  ///
 	legend(on nocolfirst nostack cols(1) rowgap(minuscule)  ///
 		colgap(zero) keygap(minuscule) size(medsmall)  ///
 		color(black) margin(zero) box fcolor(white)  ///
@@ -535,12 +576,13 @@ graph pie average_issues, over(categories_issues) ///
 	graphregion(margin(zero) fcolor(white) lcolor(white) /// 
 		lwidth(none) ifcolor(white) ilcolor(white) ilwidth(none))  ///
 	plotregion(margin(zero) fcolor(white) lcolor(white)  ///
-		lwidth(none) ifcolor(white) ilcolor(white) ilwidth(none))
+		lwidth(none) ifcolor(white) ilcolor(white) ilwidth(none)) name(issues_type`category', replace)
 
 *graph export "$analysis_out\16_cat_issues.pdf", as(pdf) replace
-graph export "$analysis_out/16_cat_issues.png", width(4000) replace
-
-
+graph export "$analysis_out/16_cat_issues_type`category'.png", width(4000) replace
+restore
+}
+-
 *--------------------6.2: Solutions 
 
 

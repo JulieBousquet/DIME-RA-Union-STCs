@@ -25,6 +25,14 @@ if inlist(c(username), "wb527175", "julie") == 1 {
 	global dropbox	`"/users/julie/Dropbox/DIME-RA-Union-STCs"'
    
    }
+   
+  if inlist(c(username), "mcayala") == 1 {
+   
+	global github 	`"/Volumes/Camila/GitHub/DIME-RA-Union-STCs/"'
+	global dropbox	`"/Volumes/Camila/Dropbox/World Bank/DIME-RA-Union-STCs/"'
+   
+   }
+ 
 
 
  *Randomization folder globals

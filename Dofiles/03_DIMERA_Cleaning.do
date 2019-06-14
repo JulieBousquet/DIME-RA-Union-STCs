@@ -13,7 +13,7 @@ Output:
 /*====================================================================
                         0: Program set up
 ====================================================================*/
-version 14.2
+*version 14.2
 drop _all
 
 use "$analysis_dt/02. Base/DIMERA_Union_agenda_Prep.dta", clear
@@ -29,70 +29,46 @@ list issue1, table notrim
 list issue2, table notrim
 list issue3, table notrim
 
-preserve
-keep iid issue1
-tempfile issue1
-save `issue1'
-restore
+isid iid
+keep iid issue* solution*
+reshape long issue solution, i(iid) j(number)
+count if !mi(issue) // 74 issues
 
-preserve
-keep iid issue2
-tempfile issue2
-save `issue2'
-restore
-
-preserve
-keep iid issue3
-tempfile issue3
-save `issue3'
-restore
-
-use `issue1', clear
-append using `issue2'
-append using `issue3'
-
-sort iid
-gen aid = _n
-
-*Number of issues
-gen issue = issue1
-replace issue = issue2 if mi(issue)
-replace issue = issue3 if mi(issue)
-tab issue
-*74 issues
+gen aid = string(iid) + "_" + string(number)
+isid aid
 
 /*Categorie 1: Working Condition
-9) Working conditions in Country Offices, for example in my 
+8) Working conditions in Country Offices, for example in my 
 case most of the times I cannot even find a desk to work, 
 and given the internet poor conditions in the country 
 (outside WB office), going to a cafÃ© or working from home 
 is not an option.
-34) Support to those working largely in isolation in COs  */
+36) Support to those working largely in isolation in COs  */
 gen is_working_condition = 1 if ///
-			aid == 9 | ///
-			aid == 34 
+			aid == "3_1" | ///
+			aid == "12_3" 
 
 /*Categorie 2: Visas
 89) Help for visas/ paid travels for visas  
-83) visa compliance 
+84) visa compliance 
 93) Leaving the country for visa compliance: 1. it's costly 
 and 2. it's WAY more costly if you're from a developing 
 country that needs visa for everywhere.   
-43) For sake of getting work visa renewal in country of work, 
+44) For sake of getting work visa renewal in country of work, 
 would be better to have ETC style contract */			
 gen is_visa = 1 if ///
-			aid == 89 | ///
-			aid == 83 | ///
-			aid == 93 | ///
-			aid == 43
+			aid == "30_2" | ///
+			aid == "28_3" | ///
+			aid == "31_3" | ///
+			aid == "15_2"
 
 /*Categorie 3: Horizontal Mobility
 10) Not very open to inter-sector mobility within DIME
-13) Lack of flexibility to work on different projects 
+15) Lack of flexibility to work on different projects 
 (RAs/FCs may be interested in more than one thematic area)   */
 gen is_horizontal_mobility = 1 if ///
-			aid == 10 | ///
-			aid == 13 
+			aid == "4_1" | ///
+			aid == "5_3" 
 
 /*Categorie 4: Length contract
 21) Contract type and respect of the limit of days: if STC, en
@@ -118,12 +94,12 @@ years, what's the logic in filling it with an STC contract?
 clear guidance that STCs cannot be asked to work more 
 days than they're paid for   */
 gen is_contract_length = 1 if ///
-			aid == 21 | ///
-			aid == 31 | ///
-			aid == 59 | ///
-			aid == 65 | ///
-			aid == 81 | ///
-			aid == 79
+			aid == "7_1" | ///
+			aid == "11_1" | ///
+			aid == "20_1" | /// 
+			aid == "22_1" | ///
+			aid == "27_1" | ///
+			aid == "27_2"
 
 /*Category 5: Contracts
 27) Improvement on contract structure situation
@@ -135,30 +111,30 @@ gen is_contract_length = 1 if ///
 48) contract type
 56) Contract type
 77) contract type
-28)  Understanding the difference between the contract types 
+28)  Understanding the difference between the contract types           -------> transparency?
 and if any regimes for health insurance and pension scheme 
 could be provided with some contracts. 
 44) Should be possible to hold ETC contract and be based in 
 'field' for those of us that are interested to do ETC contract, 
 but have no desire to be based in DC. How can we make this 
 possible (ex, couple of trips a year to DC with frequent video calls)?  
-7) Contract type. As FC is implied that we are available 
+7) Contract type. As FC is implied that we are available               
 everyday, and coordinating logistics, or doing data analysis, 
 however, our contract doesn't cover any health insurance. 
 In many cases it doesn't take into account the differences in 
 housing/food/other expenses. */
 gen is_contract_type = 1 if ///
-			aid == 27 | ///
-			aid == 8  | ///
-			aid == 13 | ///
-			aid == 22 | ///
-			aid == 37 | ///
-			aid == 48 | ///
-			aid == 56 | ///
-			aid == 77 | ///
-			aid == 28 | ///
-			aid == 44 | ///
-			aid == 7
+			aid == "9_1" | ///
+			aid == "13_3"  | /// ******************************
+			aid == "16_3" | ///
+			aid == "19_1" | ///
+			aid == "26_2" | ///
+			aid == "3_2" | ///
+			aid == "8_2" | ///
+			aid == "10_2" | ///
+			aid == "2_2" | ///
+			aid == "21_1" | ///
+			aid == "15_3"
 
 /*Category 6: Health Insureance  
 28)  Understanding the difference between the contract types 
@@ -172,10 +148,10 @@ In many cases it doesn't take into account the differences in
 housing/food/other expenses.
 12) Health insurance*/
 gen is_health_insurance = 1 if ///
-			aid == 28 | ///
-			aid == 19 | ///
-			aid == 7  | ///
-			aid == 12
+			aid == "10_2" | ///
+			aid == "7_2" | ///
+			aid == "3_2"  | ///
+			aid == "4_3"
 
 /*Category 7: Transparency 
 24) Salary transparency for all DIME members
@@ -196,25 +172,25 @@ the contract is for. The RAs work hard and they should
 be compensated with promotions or contract improvements.  
 58)  Greater transparency with regards to hiring.  */
 gen is_transparency = 1 if ///
-			aid == 24 | ///
-			aid == 74 | ///
-			aid == 89 | ///
-			aid == 20 | ///
-			aid == 32 | ///
-			aid == 58 
+			aid == "8_1" | ///
+			aid == "25_1" | ///
+			aid == "30_1" | ///
+			aid == "7_3" | ///
+			aid == "11_3" | ///
+			aid == "20_3" 
 
 /*Category 8: Career Guidance
-34) Career guidance
-38) Career Guidance
-46) career guidance
-53) Career guidance
-57) Career guidance
-78) career guidance
+ 34) Career guidance 
+ 38) Career Guidance
+ 46) career guidance
+ 53) Career guidance
+ 57) Career guidance
+ 78) career guidance
 11) Lack of guidance that is needed in a professional 
 environment (there is a lot of work-related guidance from 
 TTLs, this issue is about fostering a place the employee 
 feels more valued)  
-15) Lack of career guidance/mentoring.
+ 15) Lack of career guidance/mentoring.
 26) Mentorship program: road to a solid Phd program  
 39) Mentorship 
 60) More interactions with DIME economists: I would like the 
@@ -222,14 +198,14 @@ opportunity to interact with other TTLs who could give me
 guidance regarding career, new research projects etc. Currently, 
 there is a disconnect between the economists and STCs, in 
 that STCs do not get to interact with an yone other than our TTLs.
-84) future for RAs/FCs, career guidance  
-8) Career Guidance: As a person that entered the Bank directly 
+ 84) future for RAs/FCs, career guidance  
+ 8) Career Guidance: As a person that entered the Bank directly 
 into the field, there's no institutional guidance on how to 
 open up other opportunities -- and the networking opportunity of 
 being in HQ is out of the formula -- the little information 
 that I have is through my TTL, but it's not enough.
 55) Personal development 
-71) Career guidance and mentoring program
+ 71) Career guidance and mentoring program
 90) Mentorship program on how to get a phd and get feedback 
 on proposal
 23) Career tracks
@@ -238,24 +214,16 @@ to become a staff
 */
 
 gen is_career_guidance = 1 if ///
-			aid == 34 | ///
-			aid == 38 | ///
-			aid == 46 | ///
-			aid == 53 | ///
-			aid == 57 | ///
-			aid == 78 | ///
-			aid == 11 | ///
-			aid == 15 | ///
-			aid == 26 | ///
-			aid == 39 | ///
-			aid == 60 | ///
-			aid == 84 | ///
-			aid == 8  | ///
-			aid == 55 | ///
-			aid == 71 | ///
-			aid == 90 | ///
-			aid == 23 | ///
-			aid == 29 
+			inlist(aid, "12_2", "13_1", "16_2", "18_2", "19_2") | ///
+			inlist(aid,"26_1", "3_3", "5_2", "24_3", "28_2") | ///
+			aid == "4_2" | ///
+			aid == "9_2" | ///
+			aid == "13_2" | ///
+			aid == "20_2" | ///
+			aid == "19_3" | ///
+			aid == "30_3" | ///
+			aid == "8_3" | ///
+			aid == "10_3"
 
 /*Category 9: Career Progress
 35) Future for STCs
@@ -284,14 +252,14 @@ That is just a good as an education on working in the
 development economics field.   
  */
 gen is_career_progress = 1 if ///
-			aid == 35 | ///
-			aid == 62 | ///
-			aid == 42 | ///
-			aid == 47 | ///
-			aid == 50 | ///
-			aid == 54 | ///
-			aid == 84 | ///
-			aid == 33
+			aid == "12_1" | ///
+			aid == "21_2" | ///
+			aid == "14_1" | ///
+			aid == "16_1" | ///
+			aid == "17_1" | ///
+			aid == "18_1" | ///
+			aid == "28_2" | ///
+			aid == "11_2"
 
 /*Category 10: Learning Opportunities
 45) Would be nice to have more training opportunities 
@@ -299,8 +267,8 @@ and chances to attend workshops/conferences on behalf of our
 projects.
 52) Training  */
 gen is_learning_opportunities = 1 if ///
-			aid == 45 | ///
-			aid == 52 
+			aid == "15_1" | ///
+			aid == "18_3" 
 
 /*Category 11: Management
 2) Lack of professionalism 
@@ -308,16 +276,16 @@ gen is_learning_opportunities = 1 if ///
 66) Lack of constant feedback and clear channels to express 
 concerns and ask questions   */
 gen is_management  = 1 if ///
-			aid == 6  | ///
-			aid == 66 | ///
-			aid == 2
+			aid == "1_1"  | ///
+			aid == "2_1" | ///
+			aid == "22_2"
 
 /* Category 12: Communication Field
 1) How to improve links between DIME and CMU: how to engage 
 dialogue between researchers on the one hand and CMU staff
 and clients on the other.  */
 gen is_communication_field = 1 if ///
-			aid == 50 
+			aid == "17_2" 
 
 /*Category 13: Misunderstanding in DIME changes
 72) Changes being discussed now about future for RAs/FCs
@@ -327,9 +295,9 @@ the recent management changes.
 26) Future of DIME internal communications: RA/FC "union"? 
  */
 gen is_misund_DIME_changes = 1 if ///
-			aid == 72 | ///
-			aid == 14 | ///
-			aid == 26 
+			aid == "24_2" | ///
+			aid == "5_1" | ///
+			aid == "9_3" 
 
 /*Categroy 14: Misunderstanding STC contract and roles
 74)  Scope of the tasks TTL can assign to FC. It is always 
@@ -349,10 +317,10 @@ contract draws towards the end), more transparency on salary
 grids and benefits across contract types (STC, ETC, staff, etc.) 
  */
 gen is_misund_contract = 1 if ///
-			aid == 74 | ///
-			aid == 91 | ///
-			aid == 92 | ///
-			aid == 51 
+			aid == "25_2" | ///
+			aid == "31_2" | ///
+			aid == "31_1" | ///
+			aid == "17_3" 
 
 /*
 Category 15: Misunderstanding in career and growth
@@ -370,31 +338,113 @@ RA/FC proportion of all DIME staff, career path stats of
 previous RA/FCs (PhD placements, staff placements, other 
 if possible, etc)  */
 gen is_misund_career = 1 if ///
-			aid == 28 | ///
-			aid == 84 | ///
-			aid == 51 | ///
-			aid == 71
+			aid == "10_1" | ///
+			aid == "28_1" | ///
+			aid == "17_3" | ///
+			aid == "24_1"
 
+* Check all issues were assigned to a category
+egen a = rowtotal(is_working_condition is_visa is_horizontal_mobility is_contract_length is_contract_type is_health_insurance is_transparency is_career_guidance is_career_progress is_learning_opportunities is_management is_communication_field is_misund_DIME_changes is_misund_contract is_misund_career)
+tab a if !mi(issue)
+replace aid = aid + "_1"
+*drop a
+
+preserve
+keep if a == 2
+replace aid = "3_2_2" if aid == "3_2_1"
+replace aid = "10_2_2" if aid == "10_2_1"
+replace aid = "17_3_2" if aid == "17_3_1"
+replace aid = "28_2_2" if aid == "28_2_1"
+tempfile dup_is
+save	`dup_is'
+restore
+
+append using `dup_is'
+br if a == 2
+sort aid
+* issue 3_2
+replace is_contract_type = 0 if aid == "3_2_1"
+replace	is_health_insurance = 0 if aid == "3_2_2"
+* issue 10_2
+replace is_contract_type = 0 if aid == "10_2_1"
+replace	is_health_insurance = 0 if aid == "10_2_2"
+* issue 28_2
+replace is_career_guidance = 0 if aid == "28_2_1"
+replace	is_career_progress = 0 if aid == "28_2_2"
+* issue 17_3
+replace is_misund_contract = 0 if aid == "17_3_1"
+replace	is_misund_career = 0 if aid == "17_3_2"
+			
+* Create biggest clasification
+	gen issue_cat = .
+	* 1. Working at DIME / woking conditions	
+	replace issue_cat = 1 if	is_working_condition == 1 | ///
+									is_visa == 1 | ///
+									is_horizontal_mobility == 1 | ///
+									is_contract_length == 1 | ///
+									is_contract_type == 1 | ///
+									is_health_insurance == 1 | ///
+									is_learning_opportunities == 1 
+	
+	* 2. Career
+	replace issue_cat = 2 if	is_career_guidance == 1 | ///
+								is_career_progress == 1 
+	
+	* 3. Communication
+	replace issue_cat = 3 if	is_transparency == 1 | ///
+								is_management == 1 | ///
+								is_communication_field == 1 | ///
+								is_misund_DIME_changes == 1 | ///
+								is_misund_contract == 1 | ///
+								is_misund_career == 1
+		
+			lab def issue_cat_l 1 "Working conditions" 2 "Career" 3 "Communication"
+			lab val issue_cat issue_cat_l
 
 global var_issues 	is_working_condition is_visa is_horizontal_mobility ///
 					is_contract_length is_contract_type is_health_insurance ///
 					is_transparency is_career_guidance is_career_progress ///
 					is_learning_opportunities is_management ///
 					is_communication_field is_misund_DIME_changes ///
-					is_misund_contract is_misund_career					
+					is_misund_contract is_misund_career
+					
+foreach var of global var_issues {
+	replace `var' = 0 if mi(`var') & !mi(issue)
+}
 
+					
+*collapse (sum) $var_issues, by(iid)
 
-collapse (sum) $var_issues, by(iid)
+*merge 1:1 iid using "$analysis_dt/02. Base/DIMERA_Union_agenda_Prep.dta"
 
-merge 1:1 iid using "$analysis_dt/02. Base/DIMERA_Union_agenda_Prep.dta"
-
-order $var_issues, a(issue3)
-drop _merge
+*order $var_issues, a(issue3)
+*drop _merge
 
 summarize $var_issues
+drop a
 
-save "$analysis_dt/03. Temp/DIMERA_Issues", replace
+gen categories_issues = ""
+replace categories_issues = "Working Conditions" if is_working_condition == 1
+replace categories_issues = "Visa" if is_visa  == 1
+replace categories_issues = "Horizontal Mobility" if is_horizontal_mobility  == 1
+replace categories_issues = "Contract Length" if is_contract_length  == 1
+replace categories_issues = "Contract Type" if is_contract_type == 1
+replace categories_issues = "Health Insurance" if is_health_insurance == 1 
+replace categories_issues = "Transparency" if is_transparency == 1 
+replace categories_issues = "Career Guidance" if is_career_guidance == 1 
+replace categories_issues = "Career Progress" if is_career_progress == 1 
+replace categories_issues = "Learning opportunities" if is_learning_opportunities == 1
+replace categories_issues = "Management" if is_management == 1 
+replace categories_issues = "Communication Field" if is_communication_field == 1 
+replace categories_issues = "Misunderstanding DIME Changes" if is_misund_DIME_changes == 1
+replace categories_issues = "Misunderstanding Contract" if is_misund_contract == 1
+replace categories_issues = "Misunderstanding Career" if is_misund_career== 1 
 
+sort issue_cat categories_issues issue
+export excel aid issue_cat categories_issues issue using "/Volumes/Camila/Dropbox/World Bank/DIME-RA-Union-STCs/Output/list_issues_14jun2019.xlsx", sheetreplace firstrow(var)
+
+save "$analysis_dt/03. Temp/DIMERA_Issues_Camila", replace
+-
 
 *--------------------1.2:
 
