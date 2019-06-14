@@ -32,11 +32,9 @@ replace cat_dime_duration = 2 if dime_duration > 12 ///
 								 & dime_duration <= 24
 replace cat_dime_duration = 3 if dime_duration > 24 ///
 								 & dime_duration <= 36
-replace cat_dime_duration = 4 if dime_duration > 36 ///
-								 & dime_duration <= 48
 
 lab def cat_dime_duration 1 "One year" 2 "Two years" ///
-						  3 "Three years" 4 "Four years" ///
+						  3 "Three years or more" ///
 						  , modify
 
 lab val cat_dime_duration cat_dime_duration
@@ -48,7 +46,7 @@ graph bar, over(cat_dime_duration) ///
 	blabel(bar, color(white) position(center) ///
 		format(%4.0g)) yscale(off) ///
 	ylabel(, nolabels noticks nogrid) ///
-	title(Duration of work at DIME (categories)) ///
+	title(Duration of work at DIME (in percentage)) ///
 	subtitle(How long have you been working at DIME (in months)?) ///
 	note(Note: Question answered by 29 individuals)
 
@@ -73,6 +71,11 @@ tab contract_type, m
 *--------------------2.4: What is your job title?
 
 tab job_title, m
+codebook job_title
+replace job_title = 2 if job_title == 3
+lab def job_title 1 "Field Coordinator" ///
+			2 "Research Assistant/Coordinator", modify
+lab val job_title job_title
 
 graph pie, over(job_title) ///
 	plabel(_all percent, color(white) format(%4.0g)) ///
@@ -82,6 +85,8 @@ graph pie, over(job_title) ///
 graph export "$analysis_out\02_job_title.png", as(png) replace
 
 *--------------------2.5: What is the nature of your daily work?
+
+*----- [NOT INCLUDED] -----*
 
 use "$analysis_dt/04. Final/DIMERA_Cleaned", clear
 
@@ -138,7 +143,7 @@ graph hbar (mean) average_work, over(categories_work) ///
 	subtitle(What is the nature of your daily work?) ///
 	note(Note: Question answered by 31 individuals) legend(off)
 
-graph export 	"$analysis_out/03_Nature_Job.png", width(4000) replace
+graph export 	"$analysis_out/[NI]_03_Nature_Job.png", width(4000) replace
 
 *--------------------2.6: Have you ever helped on a Public Goods type task (like briefs, DIME level or programmatic things)?
 use "$analysis_dt/04. Final/DIMERA_Cleaned", clear
@@ -160,6 +165,8 @@ tab meet_gov, m
 use "$analysis_dt/04. Final/DIMERA_Cleaned", clear
 
 *--------------------3.1: Which DIME program(s) would you say you are a member of / work with directly ? 
+
+*----- [NOT INCLUDED] -----*
 
 tab dime_prog, m 
 tab dime_prog_agri, m 
@@ -218,7 +225,7 @@ graph pie average_prog, over(categories_prog) ///
 	plotregion(margin(zero) fcolor(white) lcolor(white)  ///
 		lwidth(none) ifcolor(white) ilcolor(white) ilwidth(none))
 
-graph export	"$analysis_out/04_Program.png", width(4000) replace
+graph export	"$analysis_out/[NI]_04_Program.png", width(4000) replace
  
 
 *--------------------3.2: Have you ever worked with any other teams?
@@ -238,6 +245,8 @@ graph hbar, over(other_team) bargap(5) ///
 graph export	"$analysis_out/05_other_team.png", width(4000) replace
 
 *--------------------3.2.1:	Which other teams have you worked with?
+
+*----- [NOT INCLUDED] -----*
 
 use "$analysis_dt/04. Final/DIMERA_Cleaned", clear
 
@@ -278,13 +287,18 @@ graph pie average_ot, over(categories_ot) ///
 	plotregion(margin(zero) fcolor(white) lcolor(white)  ///
 		lwidth(none) ifcolor(white) ilcolor(white) ilwidth(none))
 
-graph export	"$analysis_out/06_other_team_pie.png", width(4000) replace
+graph export	"$analysis_out/[NI]_06_other_team_pie.png", width(4000) replace
 
 *--------------------3.2.2: How often did you work with another team in the last 12 months?
 
 use "$analysis_dt/04. Final/DIMERA_Cleaned", clear
 
 tab other_team_often
+codebook other_team_often
+
+lab def other_team_often 	1 "Once a week" 2 "Once every 6 month" ///
+							3 "Once in the last year", modify
+lab val other_team_often other_team_often
 
 graph hbar, over(other_team_often) bargap(5) ///
 	blabel(bar, color(white) position(center) ///
@@ -383,17 +397,17 @@ list
 ren _varname categories_ad
 ren v1 average_ad
 
-replace categories_ad = "Don't Know" if categories_ad == "after_dime_dkn" 
-replace categories_ad = "PhD" if categories_ad == "after_dime_phd" 
+replace categories_ad = "Do not Know" if categories_ad == "after_dime_dkn" 
+replace categories_ad = "Academia" if categories_ad == "after_dime_phd" 
 replace categories_ad = "Staff" if categories_ad == "after_dime_staff" 
-replace categories_ad = "Field" if categories_ad == "after_dime_field" 
-replace categories_ad = "Other IO" if categories_ad == "after_dime_oth_io" 
+replace categories_ad = "Field Work" if categories_ad == "after_dime_field" 
+replace categories_ad = "Other IO or NGO" if categories_ad == "after_dime_oth_io" 
 replace categories_ad = "Public" if categories_ad == "after_dime_public" 
 replace categories_ad = "Private" if categories_ad == "after_dime_private" 
 replace categories_ad = "RA" if categories_ad == "after_dime_ra" 
-replace categories_ad = "NGO" if categories_ad == "after_dime_ngo" 
-replace categories_ad = "Master" if categories_ad == "after_dime_master" 
-replace categories_ad = "Post Doc" if categories_ad == "after_dime_postdoc" 
+replace categories_ad = "Other IO or NGO" if categories_ad == "after_dime_ngo" 
+replace categories_ad = "Academia" if categories_ad == "after_dime_master" 
+replace categories_ad = "Academia" if categories_ad == "after_dime_postdoc" 
 replace categories_ad = "Academia" if categories_ad == "after_dime_academia" 
 
 graph pie average_ad, over(categories_ad) ///
@@ -426,11 +440,13 @@ use "$analysis_dt/04. Final/DIMERA_Cleaned", clear
 *--------------------5.1: Are you generally satisfied with your type of contract?
 
 tab satisf_contract, m  
+codebook satisf_contract
+replace satisf_contract = 4 if satisf_contract == 5
 
 graph pie, over(satisf_contract) ///
 	plabel(_all percent, color(white) format(%4.0g)) ///
 	title(Satisfation with Contract) subtitle(Are you generally satisfied with your type of contract?) ///
-	note(Note: Question answered by 31 individuals)
+	note("Note: Question answered by 31 individuals" "The category 'Disatisfied' includes 'Disatisfied' and 'Very Disatisfied' ")
 
 graph export "$analysis_out\13_satisf_contract.png", as(png) replace
 
@@ -438,11 +454,13 @@ graph export "$analysis_out\13_satisf_contract.png", as(png) replace
 *--------------------5.2: Are you generally satisfied with your working conditions?
 
 tab satisf_working_cond, m  
+codebook satisf_working_cond
+replace satisf_working_cond = 4 if satisf_working_cond == 5
 
 graph pie, over(satisf_working_cond) ///
 	plabel(_all percent, color(white) format(%4.0g)) ///
 	title(Satisfation with Working Conditions) subtitle(Are you generally satisfied with your working conditions?) ///
-	note(Note: Question answered by 31 individuals)
+	note("Note: Question answered by 31 individuals"  "The category 'Disatisfied' includes 'Disatisfied' and 'Very Disatisfied' ")
 
 graph export "$analysis_out\14_satisf_work_cond.png", as(png) replace
 
@@ -457,9 +475,9 @@ graph bar, over(mentorship) ///
 	blabel(bar, color(white) position(center) ///
 		format(%4.0g)) yscale(off) ///
 	ylabel(, nolabels noticks nogrid) ///
-	title(Mentorship Program) ///
-	subtitle(Would you like to have a mentorship program at DIME?) ///
-	note(Note: Question answered by 31 individuals)
+	title("Mentorship Program (in percentage)") ///
+	subtitle("Would you like to have a mentorship program at DIME?") ///
+	note("Note: Question answered by 31 individuals")
 
 graph export	"$analysis_out/15_mentorship.png", width(4000) replace
 
