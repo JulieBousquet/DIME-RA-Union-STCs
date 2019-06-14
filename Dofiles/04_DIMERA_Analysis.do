@@ -32,11 +32,9 @@ replace cat_dime_duration = 2 if dime_duration > 12 ///
 								 & dime_duration <= 24
 replace cat_dime_duration = 3 if dime_duration > 24 ///
 								 & dime_duration <= 36
-replace cat_dime_duration = 4 if dime_duration > 36 ///
-								 & dime_duration <= 48
 
 lab def cat_dime_duration 1 "One year" 2 "Two years" ///
-						  3 "Three years" 4 "Four years" ///
+						  3 "Three years or more" ///
 						  , modify
 
 lab val cat_dime_duration cat_dime_duration
@@ -48,7 +46,7 @@ graph bar, over(cat_dime_duration) ///
 	blabel(bar, color(white) position(center) ///
 		format(%4.0g)) yscale(off) ///
 	ylabel(, nolabels noticks nogrid) ///
-	title(Duration of work at DIME (categories)) ///
+	title(Duration of work at DIME (in percentage)) ///
 	subtitle(How long have you been working at DIME (in months)?) ///
 	note(Note: Question answered by 29 individuals)
 
