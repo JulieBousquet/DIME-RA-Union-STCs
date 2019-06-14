@@ -71,6 +71,11 @@ tab contract_type, m
 *--------------------2.4: What is your job title?
 
 tab job_title, m
+codebook job_title
+replace job_title = 2 if job_title == 3
+lab def job_title 1 "Field Coordinator" ///
+			2 "Research Assistant/Coordinator", modify
+lab val job_title job_title
 
 graph pie, over(job_title) ///
 	plabel(_all percent, color(white) format(%4.0g)) ///
