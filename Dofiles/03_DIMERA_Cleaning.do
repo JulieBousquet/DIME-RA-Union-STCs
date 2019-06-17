@@ -384,13 +384,13 @@ replace	is_misund_career = 0 if aid == "17_3_2"
 								is_visa == 1 | ///
 								is_contract_type == 1 | ///
 								is_health_insurance == 1 | ///
-								is_learning_opportunities == 1 
+								is_underreporting == 1 
 	
 	* 2. Career
 	replace issue_cat = 2 if	is_horizontal_mobility == 1 | ///
-								is_underreporting == 1 | ///
 								is_career_guidance == 1 | ///
-								is_career_progress == 1 
+								is_career_progress == 1 | ///
+								is_learning_opportunities == 1 
 	
 	* 3. Communication
 	replace issue_cat = 3 if	is_transparency == 1 | ///
@@ -444,13 +444,66 @@ replace categories_issues = "Misunderstanding Career" if is_misund_career== 1
 
 sort issue_cat categories_issues issue
 
-*export excel aid issue_cat categories_issues issue ///
-*using "$analysis_out/list_issues_14jun2019.xlsx", sheetreplace firstrow(var)
+*--------------------1.2: Cateogrizing
+
+gen 	id_category_issues = 1 if categories_issues == "Working Conditions"
+replace id_category_issues = 2 if categories_issues == "Visa"
+replace id_category_issues = 3 if categories_issues == "Contract Type"
+replace id_category_issues = 4 if categories_issues == "Health Insurance"
+replace id_category_issues = 5 if categories_issues == "Underreporting"
+
+replace id_category_issues = 6 if categories_issues == "Horizontal Mobility"
+replace id_category_issues = 7 if categories_issues == "Career Guidance"
+replace id_category_issues = 8 if categories_issues == "Career Progress"
+replace id_category_issues = 9 if categories_issues == "Learning opportunities"
+
+replace id_category_issues = 10 if categories_issues == "Management"
+replace id_category_issues = 11 if categories_issues == "Transparency"
+replace id_category_issues = 12 if categories_issues == "Misunderstanding DIME Changes"
+replace id_category_issues = 13 if categories_issues == "Misunderstanding Contract"
+replace id_category_issues = 14 if categories_issues == "Misunderstanding Career"
+
+lab def id_category_issues 	1 "Working Conditions"  ///
+							2 "Visa"  ///
+							3 "Contract Type"  ///
+							4 "Health Insurance"  ///
+							5 "Underreporting" ///
+							6 "Horizontal Mobility" ///
+							7 "Career Guidance"  ///
+							8 "Career Progress"  ///
+							9 "Learning opportunities"  ///
+							10 "Management"  ///
+							11 "Transparency"  ///
+							12 "Misunderstanding DIME Changes"  ///
+							13 "Misunderstanding Contract"  ///
+							14 "Misunderstanding Career"  ///
+							, modify
+
+lab val id_category_issues id_category_issues
+
+tab id_category_issues 
+
+gen 	summary_issue = "We are asked to underreport No incentives for ttl to switch to ETCs If TTLs knows legnth project, then need to open the appropriate type of position: STC or ETC" if id_category_issues == 5
+replace summary_issue = "Better contracts and better conditions" if id_category_issues == 3
+replace summary_issue = "Lack of health insurance" if id_category_issues == 4
+replace summary_issue = "Support for visa (renewal, compliance)" if id_category_issues == 2
+replace summary_issue = "Better support and WC for field workers" if id_category_issues == 1
+replace summary_issue = "Lack of horizontal mobility" if id_category_issues == 6
+replace summary_issue = "Access to trainings" if id_category_issues == 9
+replace summary_issue = "No mentorship and guidance. For PHD and staff or else. No support from TTLs" if id_category_issues == 7
+replace summary_issue = "No understanding of what are the options after DIME and how RAs/FCs can grow there without having to do  a PhD by default" if id_category_issues == 8
+replace summary_issue = "No feebdack and communication managers / TTLs difficult to approach. No communication channel or mechanism to report/ complain. " if id_category_issues == 10
+replace summary_issue = "No clarity on how to grow at DIME or outside and what are our options No 'alumni' network " if id_category_issues == 14
+replace summary_issue = "No clarity about the scope of work , implication of the type of contract (travelling, visa, part time, under report, health insurance)" if id_category_issues == 13
+replace summary_issue = "DIME Becoming a department: what does it mean for us. How wll our situation Improve. How cam stcs be listened in the restructuration" if id_category_issues == 12
+replace summary_issue = "Need clear protocol and guidelines Need transparency in hiring, WC, rates, across teams Need to receive benefits or promotions based on our work quality" if id_category_issues == 11
+
+tab summary_issue
+
+export excel aid issue_cat categories_issues issue id_category_issues summary_issue ///
+using "$analysis_out/20190617_list_issues.xlsx", sheetreplace firstrow(var)
 
 save "$analysis_dt/03. Temp/DIMERA_Issues", replace
-
-*--------------------1.2:
-
 
 /*====================================================================
                         2: Solutions
@@ -803,10 +856,48 @@ replace categories_solutions = "Training" if sol_training == 1
 
 sort categories_solutions solution
 
+gen 	id_category_solutions = 1 if categories_solutions == "Type contract"
+replace	id_category_solutions = 2 if categories_solutions == "Visa"
+replace	id_category_solutions = 3 if categories_solutions == "Health Insurance"
+replace	id_category_solutions = 4 if categories_solutions == "Job Mobility"
+
+replace	id_category_solutions = 5 if categories_solutions == "Training"
+replace	id_category_solutions = 6 if categories_solutions == "Performance Review"
+replace	id_category_solutions = 7 if categories_solutions == "Mentorship"
+replace	id_category_solutions = 8 if categories_solutions == "Structure Role Career"
+
+replace	id_category_solutions = 9 if categories_solutions == "Communication"
+replace	id_category_solutions = 10 if categories_solutions == "Free Speech Structure"
+replace	id_category_solutions = 11 if categories_solutions == "Transparency"
+replace	id_category_solutions = 12 if categories_solutions == "Dime Management"
+replace	id_category_solutions = 13 if categories_solutions == "Openings"
+
+tab id_category_solutions, m
+
+lab def id_category_solutions 	1 "Type contract"  ///
+								2 "Visa" ///
+								3 "Health Insurance"  ///
+								4 "Job Mobility"  ///
+								5 "Training"  ///
+								6 "Performance Review"  ///
+								7 "Mentorship"  ///
+								8 "Structure Role Career"  ///
+								9 "Communication"  ///
+								10 "Free Speech Structure"  ///
+								11 "Transparency"  ///
+								12 "Dime Management"  ///
+								13 "Openings"  ///
+								, modify
+
+lab val id_category_solutions id_category_solutions
+
+sort id_category_solutions
+
+export excel aid solution categories_solutions id_category_solutions ///
+using "$analysis_out/20190617_list_solutions.xlsx", sheetreplace firstrow(var)
+
+
 save "$analysis_dt/03. Temp/DIMERA_Solutions", replace
-
-
-*--------------------2.2: Matching Solutions with issues
 
 
 /*====================================================================
