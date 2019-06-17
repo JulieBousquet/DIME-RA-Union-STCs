@@ -30,8 +30,8 @@ list issue2, table notrim
 list issue3, table notrim
 
 isid iid
-keep iid issue* solution*
-reshape long issue solution, i(iid) j(number)
+keep iid issue* 
+reshape long issue, i(iid) j(number)
 count if !mi(issue) // 74 issues
 
 gen aid = string(iid) + "_" + string(number)
@@ -70,7 +70,7 @@ gen is_horizontal_mobility = 1 if ///
 			aid == "4_1" | ///
 			aid == "5_3" 
 
-/*Categorie 4: Length contract
+/*Categorie 4: Underreporting
 21) Contract type and respect of the limit of days: if STC, en
 sure RAs do not work more than 150 days to incentivize TTLs 
 to transition STCs to ETCs 
@@ -93,7 +93,7 @@ years, what's the logic in filling it with an STC contract?
 79) Working the number of days we're paid: There needs to be 
 clear guidance that STCs cannot be asked to work more 
 days than they're paid for   */
-gen is_contract_length = 1 if ///
+gen is_underreporting = 1 if ///
 			aid == "7_1" | ///
 			aid == "11_1" | ///
 			aid == "20_1" | /// 
@@ -131,10 +131,8 @@ gen is_contract_type = 1 if ///
 			aid == "26_2" | ///
 			aid == "3_2" | ///
 			aid == "8_2" | ///
-			aid == "10_2" | ///
 			aid == "2_2" | ///
-			aid == "21_1" | ///
-			aid == "15_3"
+			aid == "21_1" 
 
 /*Category 6: Health Insureance  
 28)  Understanding the difference between the contract types 
@@ -320,7 +318,8 @@ gen is_misund_contract = 1 if ///
 			aid == "25_2" | ///
 			aid == "31_2" | ///
 			aid == "31_1" | ///
-			aid == "17_3" 
+			aid == "17_3" | ///
+			aid == "10_2" 
 
 /*
 Category 15: Misunderstanding in career and growth
@@ -341,10 +340,13 @@ gen is_misund_career = 1 if ///
 			aid == "10_1" | ///
 			aid == "28_1" | ///
 			aid == "17_3" | ///
-			aid == "24_1"
+			aid == "24_1" | ///
+			aid == "15_3"
+
+
 
 * Check all issues were assigned to a category
-egen a = rowtotal(is_working_condition is_visa is_horizontal_mobility is_contract_length is_contract_type is_health_insurance is_transparency is_career_guidance is_career_progress is_learning_opportunities is_management is_communication_field is_misund_DIME_changes is_misund_contract is_misund_career)
+egen a = rowtotal(is_working_condition is_visa is_horizontal_mobility is_underreporting is_contract_type is_health_insurance is_transparency is_career_guidance is_career_progress is_learning_opportunities is_management is_communication_field is_misund_DIME_changes is_misund_contract is_misund_career)
 tab a if !mi(issue)
 replace aid = aid + "_1"
 *drop a
@@ -360,7 +362,7 @@ save	`dup_is'
 restore
 
 append using `dup_is'
-br if a == 2
+*br if a == 2
 sort aid
 * issue 3_2
 replace is_contract_type = 0 if aid == "3_2_1"
@@ -379,15 +381,15 @@ replace	is_misund_career = 0 if aid == "17_3_2"
 	gen issue_cat = .
 	* 1. Working at DIME / woking conditions	
 	replace issue_cat = 1 if	is_working_condition == 1 | ///
-									is_visa == 1 | ///
-									is_horizontal_mobility == 1 | ///
-									is_contract_length == 1 | ///
-									is_contract_type == 1 | ///
-									is_health_insurance == 1 | ///
-									is_learning_opportunities == 1 
+								is_visa == 1 | ///
+								is_contract_type == 1 | ///
+								is_health_insurance == 1 | ///
+								is_learning_opportunities == 1 
 	
 	* 2. Career
-	replace issue_cat = 2 if	is_career_guidance == 1 | ///
+	replace issue_cat = 2 if	is_horizontal_mobility == 1 | ///
+								is_underreporting == 1 | ///
+								is_career_guidance == 1 | ///
 								is_career_progress == 1 
 	
 	* 3. Communication
@@ -402,7 +404,7 @@ replace	is_misund_career = 0 if aid == "17_3_2"
 			lab val issue_cat issue_cat_l
 
 global var_issues 	is_working_condition is_visa is_horizontal_mobility ///
-					is_contract_length is_contract_type is_health_insurance ///
+					is_underreporting is_contract_type is_health_insurance ///
 					is_transparency is_career_guidance is_career_progress ///
 					is_learning_opportunities is_management ///
 					is_communication_field is_misund_DIME_changes ///
@@ -427,7 +429,7 @@ gen categories_issues = ""
 replace categories_issues = "Working Conditions" if is_working_condition == 1
 replace categories_issues = "Visa" if is_visa  == 1
 replace categories_issues = "Horizontal Mobility" if is_horizontal_mobility  == 1
-replace categories_issues = "Contract Length" if is_contract_length  == 1
+replace categories_issues = "Underreporting" if is_underreporting  == 1
 replace categories_issues = "Contract Type" if is_contract_type == 1
 replace categories_issues = "Health Insurance" if is_health_insurance == 1 
 replace categories_issues = "Transparency" if is_transparency == 1 
@@ -441,10 +443,11 @@ replace categories_issues = "Misunderstanding Contract" if is_misund_contract ==
 replace categories_issues = "Misunderstanding Career" if is_misund_career== 1 
 
 sort issue_cat categories_issues issue
-export excel aid issue_cat categories_issues issue using "/Volumes/Camila/Dropbox/World Bank/DIME-RA-Union-STCs/Output/list_issues_14jun2019.xlsx", sheetreplace firstrow(var)
 
-save "$analysis_dt/03. Temp/DIMERA_Issues_Camila", replace
--
+*export excel aid issue_cat categories_issues issue ///
+*using "$analysis_out/list_issues_14jun2019.xlsx", sheetreplace firstrow(var)
+
+save "$analysis_dt/03. Temp/DIMERA_Issues", replace
 
 *--------------------1.2:
 
@@ -453,7 +456,7 @@ save "$analysis_dt/03. Temp/DIMERA_Issues_Camila", replace
                         2: Solutions
 ====================================================================*/
 
-use "$analysis_dt/03. Temp/DIMERA_Issues", clear
+use "$analysis_dt/02. Base/DIMERA_Union_agenda_Prep.dta", clear
 
 
 *--------------------2.1: Categories
@@ -462,72 +465,47 @@ tab solution1, m
 tab solution2, m 
 tab solution3, m 
 
-*--------------------2.2:
 list solution1, table notrim
 list solution2, table notrim
 list solution3, table notrim
 
-preserve
-keep iid solution1
-tempfile solution1
-save `solution1'
-restore
+isid iid
+keep iid solution*
+reshape long solution, i(iid) j(number)
+count if !mi(solution) // 57 issues
 
-preserve
-keep iid solution2
-tempfile solution2
-save `solution2'
-restore
-
-preserve
-keep iid solution3
-tempfile solution3
-save `solution3'
-restore
-
-use `solution1', clear
-append using `solution2'
-append using `solution3'
-
-sort iid
-gen aid = _n
-
-*Number of issues
-gen solution = solution1
-replace solution = solution2 if mi(solution)
-replace solution = solution3 if mi(solution)
-tab solution
-*57 solutions 
+gen aid = string(iid) + "_" + string(number)
+isid aid
 
 /*Categorie 1: Mentorship
-3) Have another TTL work as a "buddy" / "mentor" with you. 
+1_1) Have another TTL work as a "buddy" / "mentor" with you. 
 (Think McKinsey has something similar where you can reach 
 out to a staff member who you have not worked with)  
-34) Create clear paths for career progression, including 
+12_1) Create clear paths for career progression, including 
 performance reviews, goal setting and mentoring
-10) Create the mentorship program around a buddy system 
+4_2) Create the mentorship program around a buddy system 
 (prevalent in the private sector) where another 
 sector/industry's staff member (like an Economist) meets once 
 or twice a quarter with the RA/FC for coffee chats 
-13) Develop a career guidance & mentoring program for RAs/FCs 
-46) Set up a mentorship program to help FCs to pursue their goal   
+5_2) Develop a career guidance & mentoring program for RAs/FCs 
+16_2) Set up a mentorship program to help FCs to pursue their goal   
  */
-gen sol_mentorship = 1 if ///
-			aid == 3 | ///
-			aid == 34 | ///
-			aid == 10 | ///
-			aid == 13 | ///
-			aid == 46  
+gen sol_mentorship = 1 if   ///
+			aid == "1_1"  | ///
+			aid == "12_1" | ///
+			aid == "4_2"  | ///
+			aid == "5_2"  | ///
+			aid == "16_2"  
 
 /*Categorie 2: Position protocol
-8) First screening process of candidates for new position 
+3_1) First screening process of candidates for new position 
 should be anonymous. So it's avoided to pre-select 
 "favorite candidate!" for the position, and do the first
 screening based on basic profile characteristics or exam 
 (with an ID), and after select a small pool, then with the 
 interview the selected one will compete. 
-29)  More clear and transparent career section on the dime webpage
-31) Every single RA that is not currently going to be attending 
+10_1)  More clear and transparent career section on the dime webpage
+11_1) Every single RA that is not currently going to be attending 
 a PhD program in the Fall of 2019 should be transitioned 
 from an STC to ETC by the start of the new fiscal year. This 
 will make it so that every RA is not restricted by the 150 days 
@@ -536,59 +514,59 @@ worrying about how many days he/she has left. This will greatly
 improve morale among RAs and lead to a better improvement in 
 quality because RAs will finally be compensated for everyday 
 that they have worked.  
-28) More information on openings. Sometimes some STC 
+10_2) More information on openings. Sometimes some STC 
 opportunities are published on DIME webpage without being 
 shared with the internal staff so that we are not necessarily 
 aware of them  
-88) Fro the mentorship, through a time allocated to RAs to do 
+30_2) Fro the mentorship, through a time allocated to RAs to do 
 brainstorm and do short presentation on their proposal  
-89) Open applications with information about the position but 
+30_3) Open applications with information about the position but 
 make it clear positions can be open expost 
  */
 gen sol_openings_protocol = 1 if ///
-			aid == 8 | ///
-			aid == 29 | ///
-			aid == 31 | ///
-			aid == 28 | ///
-			aid == 88 | ///
-			aid == 89 
+			aid == "3_1"| ///
+			aid == "10_1" | ///
+			aid == "11_1" | ///
+			aid == "10_2" | ///
+			aid == "30_2" | ///
+			aid == "30_3" 
 /*
 Categori 3: Mobility
-11) Need to create an environment where RAs can approach 
+4_1) Need to create an environment where RAs can approach 
 those in other sectors openly within DIME 
-42)  More cross-GP work, this will enable FC/RAs to network 
+14_1)  More cross-GP work, this will enable FC/RAs to network 
 and find opportunities outside DIME. 
-21) Allow for more possibilities of working accross projects / 
+7_2) Allow for more possibilities of working accross projects / 
 DIME analytics or other to make it easier to get the budget 
 for ETC or staff position  
-35) Pair up FCs in COs with people in DC so they work together 
+12_2) Pair up FCs in COs with people in DC so they work together 
 on projects
-37) Possibility to work with other TTLs within the same team 
+13_2) Possibility to work with other TTLs within the same team 
 (at least at the beginning) 
-59) Organize events for more interaction between RAs/FCs and 
+20_2) Organize events for more interaction between RAs/FCs and 
 Economists. Circulate lists of projects and staff requirements 
 so RAs/FCs could volunteer research time with IEs that are more 
 aligned with their personal research interests.  
-14) Increase horizontal mobility (flexibility to work on 
+5_3) Increase horizontal mobility (flexibility to work on 
 different projects) */
 gen sol_job_mobility = 1 if ///
-			aid == 11 | ///
-			aid == 42 | ///
-			aid == 21 | ///
-			aid == 35 | ///
-			aid == 37 | ///
-			aid == 59 | ///
-			aid == 14
+			aid == "4_1" | ///
+			aid == "14_1" | ///
+			aid == "7_2" | ///
+			aid == "12_2" | ///
+			aid == "13_2" | ///
+			aid == "20_2" | ///
+			aid == "5_3"
 
 /* Categorie 4: Roles and Career Path
-15) Clarify roles and possible career paths for RAs/FCs with 
+5_1) Clarify roles and possible career paths for RAs/FCs with 
 the recent management changes  
-35) Career structure for RAs 
-43) Have a more structured path of progression of responsibility, 
+13_1) Career structure for RAs 
+15_1) Have a more structured path of progression of responsibility, 
 even while still based in the field.
-47) Perform a personnal development plan in order to be aware 
+16_1) Perform a personnal development plan in order to be aware 
 of FCs expectations in the following years
-32) Create a career path for RAs who do not want to pursue PhD. 
+11_2) Create a career path for RAs who do not want to pursue PhD. 
 After 2 years at working at DIME RAs should either be promoted to 
 be Research Analysts or let go if the TTL does not think they 
 were a fit they should not continue to be an RA while taking on 
@@ -598,20 +576,20 @@ and incoming RAs that DIME will invest in you if you invest time
 and energy into the team. It will also lead to a salary 
 improvement for RAs, knowing that their hard worked has been off 
 after 2 years. 
-57) TTLs should be following more closely RA's work, interests, 
+19_2) TTLs should be following more closely RA's work, interests, 
 and future plans. Also, based on this, RAs should be 
 seen as potential co-authors in the future (when out of DIME) 
 and therefore included more closely in project definition and 
 design.
-22) Horizontal mobility is great but there is virtually no 
+8_3) Horizontal mobility is great but there is virtually no 
 vertical mobility for RAs/FCs. There should be more stable 
 RAs/FCs so DIME can finally start building institutional 
 knowledge.
-49) Jointly develop (DIME management, TTLs, some representatives 
+17_3) Jointly develop (DIME management, TTLs, some representatives 
 of FCs and RAs) a clear personal development strategy for its 
 consultants, covering training opportunities, career pathways, 
 collaboration with other teams within-beyond DIME..
-55) Following the last point, it would be great to focus more of 
+19_3) Following the last point, it would be great to focus more of 
 our time on work that will benefit as in the future (closer to 
 research for RAs interested in PhDs, data for data-scientists 
 geeks, operations for RAs pursuing a career in the Bank). 
@@ -620,15 +598,15 @@ but with DIME expansion there should be some diversification
 to allow low- and high-skill jobs to be differentiated.
 */
 gen sol_structure_role_career = 1 if ///
-			aid == 15 | ///
-			aid == 35 | ///
-			aid == 43 | ///
-			aid == 47 | ///
-			aid == 32 | ///
-			aid == 57 | ///
-			aid == 22 | ///
-			aid == 49 | ///
-			aid == 55 
+			aid == "5_1" | ///
+			aid == "13_1" | ///
+			aid == "15_1" | ///
+			aid == "16_1" | ///
+			aid == "11_2" | ///
+			aid == "19_2" | ///
+			aid == "8_3" | ///
+			aid == "17_3" | ///
+			aid == "19_3" 
 
 /*
 Categorie 5: Heatlh Insurance
@@ -639,17 +617,17 @@ Bank-wide issue and DIME probably cannot act on its own even if
 it wanted to get its RAs/FCs better coverage  
  */
 gen sol_health_insurance = 1 if ///
-			aid == 16 | ///
-			aid == 63 | ///
-			aid == 12 
+			aid == "6_1" | ///
+			aid == "21_1" | ///
+			aid == "4_3" 
 
 /*Categroie 6: Feedback
 24) There should be a mandatory feedback system between 
 TTL and RA/FCs.  
 51) Performance Assessment */
 gen sol_performance_review = 1 if ///
-			aid == 24 | ///
-			aid == 51 
+			aid == "8_1" | ///
+			aid == "18_1" 
 
 /* Categorie 7: Type of contract
 26) ETC contracts 
@@ -667,13 +645,13 @@ guarantee that we'll be supported in case we resist that
 84) Provide other opportunities for STCs after 150 days of work
 - with other Intl organizations / NGOs, projects, etc. */
 gen sol_type_contract = 1 if ///
-			aid == 26 | ///
-			aid == 56 | ///
-			aid == 58 | ///
-			aid == 65 | ///
-			aid == 82 | ///
-			aid == 81 | ///
-			aid == 84
+			aid == "9_1" | ///
+			aid == "19_1" | ///
+			aid == "20_1" | ///
+			aid == "22_1" | ///
+			aid == "28_1" | ///
+			aid == "27_2" | ///
+			aid == "28_2"
 
 /*Categorie 8: More communication
 93) Explain clearly working conditions when making the offer 
@@ -705,14 +683,14 @@ that everyone has an equal chance of being selected.
 48)  Communicate on this program if their already exist  
  */
 gen sol_communication = 1 if ///
-			aid == 93 | ///
-			aid == 75 | ///
-			aid == 7  | ///
-			aid == 25 | ///
-			aid == 19 | ///
-			aid == 33 | ///
-			aid == 48 | ///
-			aid == 17
+			aid == "31_1" | ///
+			aid == "25_1" | ///
+			aid == "3_2"  | ///
+			aid == "6_2" | ///
+			aid == "9_2" | ///
+			aid == "7_3" | ///
+			aid == "11_3" | ///
+			aid == "16_3"
 
 /*Categorie 9: DIME Management
 20) Limit the number of STCs a TTLs can have at the same 
@@ -722,9 +700,9 @@ issues or better compel/train TTL to do so
 64) Have better management within the teams and across 
 DIME overall   */
 gen sol_dime_management = 1 if ///
-			aid == 20 | ///
-			aid == 50 | ///
-			aid == 64 
+			aid == "7_1" | ///
+			aid == "17_1" | ///
+			aid == "22_2" 
 
 /*Categorie 10: Free Parole support structure
 79) A process whereby STCs can speak to someone neutral at 
@@ -738,17 +716,17 @@ RA's and FC's to share common challenges and experiences.
 74) Provide a device where FC can inquire anonymously whether 
 a task assigned by TTL is justified or bit borderline. */
 gen sol_free_speech_structure = 1 if ///
-			aid == 79 | ///
-			aid == 51 | ///
-			aid == 53 | ///
-			aid == 74 	
+			aid == "27_1" | ///
+			aid == "17_2" | ///
+			aid == "18_2" | ///
+			aid == "25_2" 	
 
 /* 
 Categorie 11: Visa
 90)  For the visas, provide a budget allocated to helping 
 RAs to travel */
 gen sol_visa = 1 if ///
-			aid == 90 										
+			aid == "30_1" 										
 
 
 /*Categorie 12: More transparency
@@ -759,8 +737,8 @@ are and access to trainings that can allow FC to be at RA skill
 level. Online trainings would be good for FCs based all over world.
  */
 gen sol_transparency = 1 if ///
-			aid == 23 | ///
-			aid == 45 							
+			aid == "8_2" | ///
+			aid == "15_2" 							
 
 
 /*Categorie 13: Training
@@ -770,9 +748,28 @@ level. Online trainings would be good for FCs based all over world.
  */
 
 gen sol_training = 1 if ///
-			aid == 45 							
+			aid == "15_2" 							
 
 
+* Check all issues were assigned to a category
+egen a = rowtotal(sol_mentorship sol_openings_protocol sol_job_mobility sol_structure_role_career sol_health_insurance sol_performance_review sol_type_contract sol_communication sol_dime_management sol_free_speech_structure sol_visa sol_transparency sol_training)
+tab a if !mi(solution)
+replace aid = aid + "_1"
+*drop a
+
+preserve
+keep if a == 2
+replace aid = "15_2_2" if aid == "15_2_1"
+tempfile dup_is
+save	`dup_is'
+restore
+
+append using `dup_is'
+*br if a == 2
+sort aid
+* issue 15_2
+replace sol_transparency = 0 if aid == "15_2_1"
+replace	sol_training = 0 if aid == "15_2_2"
 
 global var_solutions 	sol_mentorship sol_openings_protocol ///
 						sol_job_mobility sol_structure_role_career ///
@@ -781,23 +778,42 @@ global var_solutions 	sol_mentorship sol_openings_protocol ///
 						sol_dime_management sol_free_speech_structure ///
 						sol_visa sol_transparency sol_training
 
-collapse (sum) $var_solutions, by(iid)
-
-merge 1:1 iid using "$analysis_dt/03. Temp/DIMERA_Issues.dta"
-
-order $var_solutions, a(solution3)
-drop _merge
+					
+foreach var of global var_solutions {
+	replace `var' = 0 if mi(`var') & !mi(solution)
+}
 
 summarize $var_solutions
+drop a
 
-save "$analysis_dt/03. Temp/DIMERA_Issues_Solutions", replace
+gen categories_solutions = ""
+replace categories_solutions = "Mentorship" if sol_mentorship == 1
+replace categories_solutions = "Openings" if sol_openings_protocol == 1
+replace categories_solutions = "Job Mobility" if sol_job_mobility == 1
+replace categories_solutions = "Structure Role Career" if sol_structure_role_career == 1
+replace categories_solutions = "Health Insurance" if sol_health_insurance == 1
+replace categories_solutions = "Performance Review" if sol_performance_review == 1
+replace categories_solutions = "Type contract" if sol_type_contract == 1
+replace categories_solutions = "Communication" if sol_communication == 1
+replace categories_solutions = "Dime Management" if sol_dime_management == 1
+replace categories_solutions = "Free Speech Structure" if sol_free_speech_structure == 1
+replace categories_solutions = "Visa" if sol_visa == 1
+replace categories_solutions = "Transparency" if sol_transparency == 1
+replace categories_solutions = "Training" if sol_training == 1
+
+sort categories_solutions solution
+
+save "$analysis_dt/03. Temp/DIMERA_Solutions", replace
+
+
+*--------------------2.2: Matching Solutions with issues
 
 
 /*====================================================================
                         3: Others
 ====================================================================*/
 
-use "$analysis_dt/03. Temp/DIMERA_Issues_Solutions", clear
+use "$analysis_dt/02. Base/DIMERA_Union_agenda_Prep.dta", clear
 
 *--------------------3.1:
 
@@ -828,7 +844,7 @@ projects and sometimes leads to events and workshops that are
 not a fulfilling experience.  
 */
 
-save "$analysis_dt/04. Final/DIMERA_Cleaned", replace
+*save "$analysis_dt/04. Final/DIMERA_Cleaned", replace
 
 *--------------------3.2:
 
