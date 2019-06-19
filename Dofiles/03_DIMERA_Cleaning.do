@@ -378,30 +378,30 @@ replace is_misund_contract = 0 if aid == "17_3_1"
 replace	is_misund_career = 0 if aid == "17_3_2"
 			
 * Create biggest clasification
-	gen issue_cat = .
+	gen issue_cat_lev1 = .
 	* 1. Working at DIME / woking conditions	
-	replace issue_cat = 1 if	is_working_condition == 1 | ///
+	replace issue_cat_lev1 = 1 if	is_working_condition == 1 | ///
 								is_visa == 1 | ///
 								is_contract_type == 1 | ///
 								is_health_insurance == 1 | ///
 								is_underreporting == 1 
 	
 	* 2. Career
-	replace issue_cat = 2 if	is_horizontal_mobility == 1 | ///
+	replace issue_cat_lev1 = 2 if	is_horizontal_mobility == 1 | ///
 								is_career_guidance == 1 | ///
 								is_career_progress == 1 | ///
 								is_learning_opportunities == 1 
 	
 	* 3. Communication
-	replace issue_cat = 3 if	is_transparency == 1 | ///
+	replace issue_cat_lev1 = 3 if	is_transparency == 1 | ///
 								is_management == 1 | ///
 								is_communication_field == 1 | ///
 								is_misund_DIME_changes == 1 | ///
 								is_misund_contract == 1 | ///
 								is_misund_career == 1
 		
-			lab def issue_cat_l 1 "Working conditions" 2 "Career" 3 "Communication"
-			lab val issue_cat issue_cat_l
+			lab def issue_cat_lev1 1 "Working conditions" 2 "Career" 3 "Communication"
+			lab val issue_cat_lev1 issue_cat_lev1
 
 global var_issues 	is_working_condition is_visa is_horizontal_mobility ///
 					is_underreporting is_contract_type is_health_insurance ///
@@ -442,7 +442,7 @@ replace categories_issues = "Misunderstanding DIME Changes" if is_misund_DIME_ch
 replace categories_issues = "Misunderstanding Contract" if is_misund_contract == 1
 replace categories_issues = "Misunderstanding Career" if is_misund_career== 1 
 
-sort issue_cat categories_issues issue
+sort issue_cat_lev1 categories_issues issue
 
 *--------------------1.2: Cateogrizing
 
@@ -500,7 +500,7 @@ replace summary_issue = "Need clear protocol and guidelines Need transparency in
 
 tab summary_issue
 
-export excel aid issue_cat categories_issues issue id_category_issues summary_issue ///
+export excel aid issue_cat_lev1 categories_issues summary_issue issue  ///
 using "$analysis_out/20190617_list_issues.xlsx", sheetreplace firstrow(var)
 
 save "$analysis_dt/03. Temp/DIMERA_Issues", replace
@@ -893,7 +893,7 @@ lab val id_category_solutions id_category_solutions
 
 sort id_category_solutions
 
-export excel aid solution categories_solutions id_category_solutions ///
+export excel aid categories_solutions solution ///
 using "$analysis_out/20190617_list_solutions.xlsx", sheetreplace firstrow(var)
 
 

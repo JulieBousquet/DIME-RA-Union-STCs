@@ -490,7 +490,7 @@ graph export	"$analysis_out/15_mentorship.png", width(4000) replace
 *--------------------6.1: Issues
 
 * 1. general categorization
-	use "$analysis_dt/03. Temp/DIMERA_Issues_Camila", clear
+	use "$analysis_dt/03. Temp/DIMERA_Issues", clear
 
 	tab issue_cat, gen(issue_cat_)
 	collapse (mean) issue_cat_*
@@ -520,7 +520,7 @@ graph export	"$analysis_out/15_mentorship.png", width(4000) replace
 
 * 2. Smaller categorization
 
-use "$analysis_dt/03. Temp/DIMERA_Issues_Camila", clear
+use "$analysis_dt/03. Temp/DIMERA_Issues", clear
 loc num_is_1 "29"
 loc num_is_2 "25"
 loc num_is_3 "26"
@@ -542,7 +542,7 @@ ren v1 average_issues
 replace categories_issues = "Working Conditions" if categories_issues == "is_working_condition" 
 replace categories_issues = "Visa" if categories_issues == "is_visa" 
 replace categories_issues = "Horizontal Mobility" if categories_issues == "is_horizontal_mobility" 
-replace categories_issues = "Contract Length" if categories_issues == "is_contract_length" 
+replace categories_issues = "Under-reporting" if categories_issues == "is_underreporting" 
 replace categories_issues = "Contract Type" if categories_issues == "is_contract_type" 
 replace categories_issues = "Health Insurance" if categories_issues == "is_health_insurance" 
 replace categories_issues = "Transparency" if categories_issues == "is_transparency" 
@@ -563,7 +563,6 @@ graph pie average_issues, over(categories_issues) ///
 	plabel(_all percent, color(black) size(vsmall) format(%4.0g)) ///
 	line(lcolor(white) lwidth(none))  ///
 	title(Categories of issues at DIME, span nobox)  ///
-	subtitle("Working conditions", span nobox)  /// 
 	note("Data based on a total of 31 respondents" "for a total of `num_is_`category'' issues reported", nobox)  ///
 	legend(on nocolfirst nostack cols(1) rowgap(minuscule)  ///
 		colgap(zero) keygap(minuscule) size(medsmall)  ///
@@ -582,11 +581,11 @@ graph pie average_issues, over(categories_issues) ///
 graph export "$analysis_out/16_cat_issues_type`category'.png", width(4000) replace
 restore
 }
--
+
 *--------------------6.2: Solutions 
 
 
-use "$analysis_dt/03. Temp/DIMERA_Issues_Solutions", clear
+use "$analysis_dt/03. Temp/DIMERA_Solutions", clear
 
 collapse (mean) $var_solutions
 cap ssc inst sxpose
