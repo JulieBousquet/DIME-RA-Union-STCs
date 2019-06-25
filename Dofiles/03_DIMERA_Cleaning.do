@@ -16,7 +16,7 @@ Output:
 *version 14.2
 drop _all
 
-use "$analysis_dt/02. Base/DIMERA_Union_agenda_Prep.dta", clear
+use "$analysis_dt/04. Final/DIMERA_Cleaned.dta", clear
 
 /*====================================================================
                         1: Issues
@@ -417,7 +417,7 @@ foreach var of global var_issues {
 					
 *collapse (sum) $var_issues, by(iid)
 
-*merge 1:1 iid using "$analysis_dt/02. Base/DIMERA_Union_agenda_Prep.dta"
+*merge 1:1 iid using "$analysis_dt/04. Final/DIMERA_Cleaned.dta"
 
 *order $var_issues, a(issue3)
 *drop _merge
@@ -503,13 +503,13 @@ tab summary_issue
 export excel aid issue_cat_lev1 categories_issues summary_issue issue  ///
 using "$analysis_out/20190617_list_issues.xlsx", sheetreplace firstrow(var)
 
-save "$analysis_dt/03. Temp/DIMERA_Issues", replace
+save "$analysis_dt/04. Final/DIMERA_Issues", replace
 
 /*====================================================================
                         2: Solutions
 ====================================================================*/
 
-use "$analysis_dt/02. Base/DIMERA_Union_agenda_Prep.dta", clear
+use "$analysis_dt/04. Final/DIMERA_Cleaned.dta", clear
 
 
 *--------------------2.1: Categories
@@ -897,14 +897,14 @@ export excel aid categories_solutions solution ///
 using "$analysis_out/20190617_list_solutions.xlsx", sheetreplace firstrow(var)
 
 
-save "$analysis_dt/03. Temp/DIMERA_Solutions", replace
+save "$analysis_dt/04. Final/DIMERA_Solutions", replace
 
 
 /*====================================================================
                         3: Others
 ====================================================================*/
 
-use "$analysis_dt/02. Base/DIMERA_Union_agenda_Prep.dta", clear
+use "$analysis_dt/04. Final/DIMERA_Cleaned.dta", clear
 
 *--------------------3.1:
 

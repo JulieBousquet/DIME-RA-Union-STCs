@@ -314,7 +314,12 @@ graph export	"$analysis_out/07_other_team_freq.png", width(4000) replace
 
 *--------------------3.3: How many IEs have you been working on since the beginning of your contract? 
 
+use "$analysis_dt/04. Final/DIMERA_Cleaned", clear
+
 tab number_ie_beginning, m
+replace number_ie_beginning = 2 if number_ie_beginning >= 2
+lab def number_ie_beginning 	1 "One" 2 "More than one", modify
+lab val number_ie_beginning number_ie_beginning
 
 graph bar, over(number_ie_beginning) ///
 	exclude0 stack  ///
@@ -329,7 +334,13 @@ graph export	"$analysis_out/08_nb_ie_begin.png", width(4000) replace
 
 *--------------------3.4: How many IEs are you working on currently? 
 
+use "$analysis_dt/04. Final/DIMERA_Cleaned", clear
+
 tab number_ie_now, m
+replace number_ie_now = 2 if number_ie_now >= 2
+lab def number_ie_now 	1 "One" 2 "More than one", modify
+lab val number_ie_now number_ie_now
+
 
 graph bar, over(number_ie_now) ///
 	exclude0 stack  ///
@@ -344,6 +355,8 @@ graph export	"$analysis_out/09_nb_ie_now.png", width(4000) replace
 
 
 *--------------------3.5: How many DIME TTLs do you have?
+
+use "$analysis_dt/04. Final/DIMERA_Cleaned", clear
 
 tab number_ttl, m
 
@@ -441,26 +454,28 @@ use "$analysis_dt/04. Final/DIMERA_Cleaned", clear
 
 tab satisf_contract, m  
 codebook satisf_contract
-replace satisf_contract = 4 if satisf_contract == 5
+*replace satisf_contract = 4 if satisf_contract == 5
 
 graph pie, over(satisf_contract) ///
 	plabel(_all percent, color(white) format(%4.0g)) ///
 	title(Satisfation with Contract) subtitle(Are you generally satisfied with your type of contract?) ///
-	note("Note: Question answered by 31 individuals" "The category 'Disatisfied' includes 'Disatisfied' and 'Very Disatisfied' ")
+	note("Note: Question answered by 31 individuals")
 
 graph export "$analysis_out\13_satisf_contract.png", as(png) replace
 
 
 *--------------------5.2: Are you generally satisfied with your working conditions?
 
+use "$analysis_dt/04. Final/DIMERA_Cleaned", clear
+
 tab satisf_working_cond, m  
 codebook satisf_working_cond
-replace satisf_working_cond = 4 if satisf_working_cond == 5
+*replace satisf_working_cond = 4 if satisf_working_cond == 5
 
 graph pie, over(satisf_working_cond) ///
 	plabel(_all percent, color(white) format(%4.0g)) ///
 	title(Satisfation with Working Conditions) subtitle(Are you generally satisfied with your working conditions?) ///
-	note("Note: Question answered by 31 individuals"  "The category 'Disatisfied' includes 'Disatisfied' and 'Very Disatisfied' ")
+	note("Note: Question answered by 31 individuals")
 
 graph export "$analysis_out\14_satisf_work_cond.png", as(png) replace
 
