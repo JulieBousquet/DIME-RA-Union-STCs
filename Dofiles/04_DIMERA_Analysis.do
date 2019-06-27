@@ -482,6 +482,8 @@ graph export "$analysis_out\14_satisf_work_cond.png", as(png) replace
 
 *--------------------5.3: Would you like to have a mentorship program at DIME that helps you with your career?
 
+use "$analysis_dt/04. Final/DIMERA_Cleaned", clear
+
 tab mentorship, m  
 
 
@@ -505,7 +507,7 @@ graph export	"$analysis_out/15_mentorship.png", width(4000) replace
 *--------------------6.1: Issues
 
 * 1. general categorization
-	use "$analysis_dt/03. Temp/DIMERA_Issues", clear
+	use "$analysis_dt/04. Final/DIMERA_Issues", clear
 
 	tab issue_cat, gen(issue_cat_)
 	collapse (mean) issue_cat_*
@@ -535,11 +537,19 @@ graph export	"$analysis_out/15_mentorship.png", width(4000) replace
 
 * 2. Smaller categorization
 
-use "$analysis_dt/03. Temp/DIMERA_Issues", clear
+use "$analysis_dt/04. Final/DIMERA_Issues", clear
 loc num_is_1 "29"
 loc num_is_2 "25"
 loc num_is_3 "26"
 
+
+global var_issues 	is_working_condition is_visa is_horizontal_mobility ///
+					is_underreporting is_contract_type is_health_insurance ///
+					is_transparency is_career_guidance is_career_progress ///
+					is_learning_opportunities is_management ///
+					is_communication_field is_misund_DIME_changes ///
+					is_misund_contract is_misund_career
+					
 
 foreach category in 1 2 3 {
 
@@ -600,7 +610,15 @@ restore
 *--------------------6.2: Solutions 
 
 
-use "$analysis_dt/03. Temp/DIMERA_Solutions", clear
+use "$analysis_dt/04. Final/DIMERA_Solutions", clear
+
+global var_solutions 	sol_mentorship sol_openings_protocol ///
+						sol_job_mobility sol_structure_role_career ///
+						sol_health_insurance sol_performance_review ///
+						sol_type_contract sol_communication ///
+						sol_dime_management sol_free_speech_structure ///
+						sol_visa sol_transparency sol_training
+
 
 collapse (mean) $var_solutions
 cap ssc inst sxpose

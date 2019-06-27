@@ -500,6 +500,32 @@ replace summary_issue = "Need clear protocol and guidelines Need transparency in
 
 tab summary_issue
 
+* LABELS
+
+lab var number "Issue number 1, 2 or 3. Up to three issues per person" 
+lab var issue "What issues would you like to see on the agenda?" 
+lab var aid "Issue ID"
+lab var is_working_condition "Issue related to working condition"
+lab var is_visa "Issue related to visa"
+lab var is_horizontal_mobility "Issue related to Horizontal mobility "
+lab var is_underreporting "Issue related to underreporting"
+lab var is_contract_type "Issue related to contract type"
+lab var is_health_insurance "Issue related to health insurance"
+lab var is_transparency "Issue related to transparency"
+lab var is_career_guidance "Issue related to career guidance"
+lab var is_career_progress "Issue related to career progress"
+lab var is_learning_opportunities "Issue related to learning opportunities"
+lab var is_management "Issue related to managment"
+lab var is_communication_field "Issue related to communication to the field"
+lab var is_misund_DIME_changes "Issue related to misunderstanding of DIME changes"
+lab var is_misund_contract "Issue related to misunderstanding of dime contract"
+lab var is_misund_career "Issue related to misunderstanding of career"
+
+lab var issue_cat_lev1 "Level of issue: 1) Working condition, 2) Career, 3) Communication"
+lab var categories_issues "Category of the issue"
+lab var id_category_issues "ID Category issue"
+lab var summary_issue "Issue summarized in a few sentences"
+
 export excel aid issue_cat_lev1 categories_issues summary_issue issue  ///
 using "$analysis_out/20190617_list_issues.xlsx", sheetreplace firstrow(var)
 
@@ -892,6 +918,44 @@ lab def id_category_solutions 	1 "Type contract"  ///
 lab val id_category_solutions id_category_solutions
 
 sort id_category_solutions
+
+gen 	summary_solution = "Do not automatically open STCs when want a long term consultant ETCs ; Enforce STC contracting rules. ; Provide benefits and financial reparation for those being part time and having to leave the country ; Respect the 150 days and talk about the next steps with RA/FC" if id_category_solutions == 1
+replace	summary_solution = "At least get information brochure make sure your ra/fc has an health insurance" if id_category_solutions == 3
+replace	summary_solution = "Help the RA/FC with the visas financially" if id_category_solutions == 2
+replace	summary_solution = "Performance Assessment (regular feedback btw TTL and RA/FCs)" if id_category_solutions == 6
+replace	summary_solution = "Mentoriship program, career guidance, career progression, goal setting" if id_category_solutions == 7
+replace	summary_solution = "Have a more structured path of progression of responsibility ; Give more access to promotions if good job and help transition if not a good match by defining qualities ; Realizing that all RAs/FCs do not want to be PhD students and embrace that fact" if id_category_solutions == 8
+replace	summary_solution = "Allow for more possibilities of working accross projects / DIME analytics ; Organize events for more interaction between RAs/FCs and Economists. Circulate lists of projects and staff requirements so RAs/FCs could volunteer research time with IEs that are more aligned with their personal research interests." if id_category_solutions == 4
+replace	summary_solution = "More training, explain how we can access trainings, outside of dime, and allocate fix hours for this" if id_category_solutions == 5
+replace	summary_solution = "Hire someone dedicated to HR/professional development issues or better compel/train TTL to do so" if id_category_solutions == 12
+replace	summary_solution = "DO: Current stats at DIME, i.e. average time of being RA/FC, RA/FC proportion of all DIME staff, career path stats of previous RA/FCs (PhD placements, staff placements, other if possible, etc) ; Explain clearly working conditions when making the offer and also make it part of the onboarding (how to submit your visa, how to change work schedule, etc) ;" if id_category_solutions == 9
+replace	summary_solution = "A process whereby STCs can speak to someone neutral at DIME (i.e. not the person giving them a contract) so that we can raise issues without fearing the contract could be discontinued ; Present the HR manager in charge of issues accountability so we know that there is someone in which we can confide him" if id_category_solutions == 10
+replace	summary_solution = "It is unclear how STC rates are set. There needs to be a clearer standards." if id_category_solutions == 11
+replace	summary_solution = "More information on openings. Sometimes some STC opportunities are published on DIME webpage without being shared with the internal staff so that we are not necessarily aware of them" if id_category_solutions == 13
+
+tab summary_solution
+
+
+lab var number "Solution number 1, 2 or 3. Up to three solutions per person" 
+lab var solution "What solution would you propose to improve RA's and FC's situation at DIME? " 
+lab var aid "Solution ID"
+
+lab var sol_mentorship "Solution related to " 
+lab var sol_openings_protocol "Solution related to sol_openings_protocol" 
+lab var sol_job_mobility "Solution related to sol_job_mobility" 
+lab var sol_structure_role_career "Solution related to sol_structure_role_career" 
+lab var sol_health_insurance "Solution related to sol_health_insurance" 
+lab var sol_performance_review "Solution related to sol_performance_review" 
+lab var sol_communication "Solution related to sol_type_contract" 
+lab var sol_dime_management "Solution related to sol_dime_management" 
+lab var sol_free_speech_structure "Solution related to sol_free_speech_structure" 
+lab var sol_visa "Solution related to sol_visa" 
+lab var sol_transparency "Solution related to sol_transparency" 
+lab var sol_training "Solution related to sol_training" 
+lab var categories_solutions "Category of the solution" 
+lab var id_category_solutions "ID Category solution" 
+
+lab var summary_solution "Solution summarized in a few sentences"
 
 export excel aid categories_solutions solution ///
 using "$analysis_out/20190617_list_solutions.xlsx", sheetreplace firstrow(var)
