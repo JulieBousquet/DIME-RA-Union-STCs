@@ -314,7 +314,12 @@ graph export	"$analysis_out/07_other_team_freq.png", width(4000) replace
 
 *--------------------3.3: How many IEs have you been working on since the beginning of your contract? 
 
+use "$analysis_dt/04. Final/DIMERA_Cleaned", clear
+
 tab number_ie_beginning, m
+replace number_ie_beginning = 2 if number_ie_beginning >= 2
+lab def number_ie_beginning 	1 "One" 2 "More than one", modify
+lab val number_ie_beginning number_ie_beginning
 
 graph bar, over(number_ie_beginning) ///
 	exclude0 stack  ///
@@ -329,7 +334,13 @@ graph export	"$analysis_out/08_nb_ie_begin.png", width(4000) replace
 
 *--------------------3.4: How many IEs are you working on currently? 
 
+use "$analysis_dt/04. Final/DIMERA_Cleaned", clear
+
 tab number_ie_now, m
+replace number_ie_now = 2 if number_ie_now >= 2
+lab def number_ie_now 	1 "One" 2 "More than one", modify
+lab val number_ie_now number_ie_now
+
 
 graph bar, over(number_ie_now) ///
 	exclude0 stack  ///
@@ -344,6 +355,8 @@ graph export	"$analysis_out/09_nb_ie_now.png", width(4000) replace
 
 
 *--------------------3.5: How many DIME TTLs do you have?
+
+use "$analysis_dt/04. Final/DIMERA_Cleaned", clear
 
 tab number_ttl, m
 
@@ -441,31 +454,35 @@ use "$analysis_dt/04. Final/DIMERA_Cleaned", clear
 
 tab satisf_contract, m  
 codebook satisf_contract
-replace satisf_contract = 4 if satisf_contract == 5
+*replace satisf_contract = 4 if satisf_contract == 5
 
 graph pie, over(satisf_contract) ///
 	plabel(_all percent, color(white) format(%4.0g)) ///
 	title(Satisfation with Contract) subtitle(Are you generally satisfied with your type of contract?) ///
-	note("Note: Question answered by 31 individuals" "The category 'Disatisfied' includes 'Disatisfied' and 'Very Disatisfied' ")
+	note("Note: Question answered by 31 individuals")
 
 graph export "$analysis_out\13_satisf_contract.png", as(png) replace
 
 
 *--------------------5.2: Are you generally satisfied with your working conditions?
 
+use "$analysis_dt/04. Final/DIMERA_Cleaned", clear
+
 tab satisf_working_cond, m  
 codebook satisf_working_cond
-replace satisf_working_cond = 4 if satisf_working_cond == 5
+*replace satisf_working_cond = 4 if satisf_working_cond == 5
 
 graph pie, over(satisf_working_cond) ///
 	plabel(_all percent, color(white) format(%4.0g)) ///
 	title(Satisfation with Working Conditions) subtitle(Are you generally satisfied with your working conditions?) ///
-	note("Note: Question answered by 31 individuals"  "The category 'Disatisfied' includes 'Disatisfied' and 'Very Disatisfied' ")
+	note("Note: Question answered by 31 individuals")
 
 graph export "$analysis_out\14_satisf_work_cond.png", as(png) replace
 
 
 *--------------------5.3: Would you like to have a mentorship program at DIME that helps you with your career?
+
+use "$analysis_dt/04. Final/DIMERA_Cleaned", clear
 
 tab mentorship, m  
 
@@ -490,7 +507,7 @@ graph export	"$analysis_out/15_mentorship.png", width(4000) replace
 *--------------------6.1: Issues
 
 * 1. general categorization
-	use "$analysis_dt/03. Temp/DIMERA_Issues_Camila", clear
+	use "$analysis_dt/04. Final/DIMERA_Issues", clear
 
 	tab issue_cat, gen(issue_cat_)
 	collapse (mean) issue_cat_*
@@ -520,11 +537,19 @@ graph export	"$analysis_out/15_mentorship.png", width(4000) replace
 
 * 2. Smaller categorization
 
-use "$analysis_dt/03. Temp/DIMERA_Issues_Camila", clear
+use "$analysis_dt/04. Final/DIMERA_Issues", clear
 loc num_is_1 "29"
 loc num_is_2 "25"
 loc num_is_3 "26"
 
+
+global var_issues 	is_working_condition is_visa is_horizontal_mobility ///
+					is_underreporting is_contract_type is_health_insurance ///
+					is_transparency is_career_guidance is_career_progress ///
+					is_learning_opportunities is_management ///
+					is_communication_field is_misund_DIME_changes ///
+					is_misund_contract is_misund_career
+					
 
 foreach category in 1 2 3 {
 
@@ -542,7 +567,7 @@ ren v1 average_issues
 replace categories_issues = "Working Conditions" if categories_issues == "is_working_condition" 
 replace categories_issues = "Visa" if categories_issues == "is_visa" 
 replace categories_issues = "Horizontal Mobility" if categories_issues == "is_horizontal_mobility" 
-replace categories_issues = "Contract Length" if categories_issues == "is_contract_length" 
+replace categories_issues = "Under-reporting" if categories_issues == "is_underreporting" 
 replace categories_issues = "Contract Type" if categories_issues == "is_contract_type" 
 replace categories_issues = "Health Insurance" if categories_issues == "is_health_insurance" 
 replace categories_issues = "Transparency" if categories_issues == "is_transparency" 
@@ -563,7 +588,6 @@ graph pie average_issues, over(categories_issues) ///
 	plabel(_all percent, color(black) size(vsmall) format(%4.0g)) ///
 	line(lcolor(white) lwidth(none))  ///
 	title(Categories of issues at DIME, span nobox)  ///
-	subtitle("Working conditions", span nobox)  /// 
 	note("Data based on a total of 31 respondents" "for a total of `num_is_`category'' issues reported", nobox)  ///
 	legend(on nocolfirst nostack cols(1) rowgap(minuscule)  ///
 		colgap(zero) keygap(minuscule) size(medsmall)  ///
@@ -582,11 +606,19 @@ graph pie average_issues, over(categories_issues) ///
 graph export "$analysis_out/16_cat_issues_type`category'.png", width(4000) replace
 restore
 }
--
+
 *--------------------6.2: Solutions 
 
 
-use "$analysis_dt/03. Temp/DIMERA_Issues_Solutions", clear
+use "$analysis_dt/04. Final/DIMERA_Solutions", clear
+
+global var_solutions 	sol_mentorship sol_openings_protocol ///
+						sol_job_mobility sol_structure_role_career ///
+						sol_health_insurance sol_performance_review ///
+						sol_type_contract sol_communication ///
+						sol_dime_management sol_free_speech_structure ///
+						sol_visa sol_transparency sol_training
+
 
 collapse (mean) $var_solutions
 cap ssc inst sxpose

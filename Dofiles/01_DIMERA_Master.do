@@ -15,21 +15,18 @@ Creation Date:    17 May 2019 - 11:32:59
  clear all
 
 	*Change the data path 
-	if c(username)=="julie" | c(username)=="WB527175" {
-		global projectfolder	`"/users/`c(username)'/Dropbox/WB_DRC_Eastern_Recovery/18_Data/03. Component 2/Thimo Urbain"'
-	}
-	
+
 if inlist(c(username), "wb527175", "julie") == 1 {
    
-	global github 	`"/users/julie/OneDrive/Documents/GitHub/DIME-RA-Union-STCs/"'
-	global dropbox	`"/users/julie/Dropbox/DIME-RA-Union-STCs"'
+	global github 	`"/users/julie/OneDrive/Documents/GitHub/DIME-STCs-Conversation/"'
+	global dropbox	`"/users/julie/Dropbox/DIME-STCs-Conversation"'
    
    }
    
   if inlist(c(username), "mcayala") == 1 {
    
-	global github 	`"/Volumes/Camila/GitHub/DIME-RA-Union-STCs/"'
-	global dropbox	`"/Volumes/Camila/Dropbox/World Bank/DIME-RA-Union-STCs/"'
+	global github 	`"/Volumes/Camila/GitHub/DIME-STCs-Conversation/"'
+	global dropbox	`"/Volumes/Camila/Dropbox/World Bank/DIME-STCs-Conversation/"'
    
    }
  

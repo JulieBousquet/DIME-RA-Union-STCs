@@ -520,8 +520,8 @@ order 	after_dime_dkn after_dime_phd after_dime_staff ///
 lab def satisf 	1 "Very Satisfied" ///
 				2 "Satisfied" ///
 				3 "Neutral" ///
-				4 "Disatisfied" ///
-				5 "Very Disatisfied" ///
+				4 "Dissatisfied" ///
+				5 "Very Dissatisfied" ///
 				, modify
 
 tab satisf_contract, m 
@@ -560,7 +560,7 @@ tab add_other, m
 
 gen iid = _n
 
-save "$analysis_dt/02. Base/DIMERA_Union_agenda_Prep.dta", replace
+save "$analysis_dt/04. Final/DIMERA_Cleaned.dta", replace
 
 
 
